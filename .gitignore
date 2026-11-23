@@ -4,5 +4,4 @@
 !.env.example
 node_modules/
 *.log
-qa-result.png
-qa-mobile.png
+qa-*.png

@@ -4,175 +4,242 @@
   const MAX_PHOTOS = 6;
   const MAX_BYTES = 10 * 1024 * 1024;
   const ACCEPTED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+  const ALL_STAGES = ["0", "1", "1+", "2", "2+", "3", "3+", "4", "4+"];
+  const PATIENT_STAGES = ["2", "2+", "3", "3+", "4"];
 
-  const stages = [
-    {
-      label: "건강 유지",
-      meaning: "건강 상태 유지",
-      title: "두피 0단계 · 건강 유지 구간",
-      summary: "뚜렷한 붉은기와 각질이 관찰되지 않는 상태로 확정됐습니다.",
-      currentCopy: "뚜렷한 염증 소견이 관찰되지 않습니다.",
-      nextCopy: "초기 변화가 반복되면 예방 관리 단계로 구분할 수 있습니다.",
-      goal: "현재 상태 유지와 정기 확인",
-      protocols: [
-        ["01", "정기 확인", "동일 조건에서 두피 변화를 확인합니다.", "기본"],
-        ["02", "홈케어 유지", "의료진이 안내한 관리 원칙을 유지합니다.", "기본"],
-        ["＋", "증상 발생 시 진료", "붉은기·각질·불편감이 생기면 상담합니다.", "조건부"]
-      ]
+  const stageData = {
+    "0": {
+      name: "Clear",
+      label: "정상 상태",
+      image: "assets/stage-0.jpg",
+      summary: "과도한 붉음과 보이는 각질이 거의 없는 건강한 두피 참고 상태입니다.",
+      symptoms: ["뚜렷한 붉음 없음", "보이는 각질 없음", "모공 주변이 비교적 깨끗함"],
+      metrics: {
+        sensitivity: "과도한 붉음이 관찰되지 않는 정상 참고 상태입니다.",
+        scale: "두꺼운 각질이나 모공 주변 잔각질이 거의 없습니다.",
+        oil: "과도한 번들거림이나 유분성 부착물이 관찰되지 않습니다."
+      }
     },
-    {
-      label: "예방 관리",
-      meaning: "초기 변화 예방 관리",
-      title: "두피 염증 1단계 · 예방 관리 구간",
-      summary: "초기 변화가 일부 관찰되어 예방 관리가 필요한 1단계로 확정됐습니다.",
-      currentCopy: "초기 변화가 관찰되어 예방 관리가 권장됩니다.",
-      nextCopy: "붉은기·각질·유분이 치료가 필요한 수준으로 커질 수 있습니다.",
-      goal: "초기 변화 안정화와 정기 확인",
-      protocols: [
-        ["01", "두피 환경 정돈", "각질·피지 상태를 확인하고 관리 환경을 정돈합니다.", "기본"],
-        ["02", "홈케어 점검", "사용 제품과 관리 습관을 점검합니다.", "기본"],
-        ["＋", "경과 확인", "확인 시점은 의료진이 결정합니다.", "조건부"]
-      ]
+    "1": {
+      name: "Almost clear",
+      label: "거의 깨끗함",
+      image: "assets/stage-1.jpg",
+      summary: "대체로 맑지만 군데군데 옅은 분홍빛과 잔각질이 관찰되는 단계입니다.",
+      symptoms: ["군데군데 옅은 분홍빛", "가는 붉은 점이 살짝 보임", "모공 근처 잔가루 정도의 각질"],
+      metrics: {
+        sensitivity: "대체로 맑지만 옅은 분홍빛과 가는 붉은 점이 일부 관찰됩니다.",
+        scale: "모공 근처에 잔가루 정도의 하얀 각질이 일부 보입니다.",
+        oil: "유분 변화가 뚜렷하지 않은 유지기 참고 상태입니다."
+      }
     },
-    {
-      label: "치료 필요",
-      meaning: "염증·장벽 치료 필요",
-      title: "두피 염증 2단계 · 치료가 필요한 구간",
-      summary: "붉은기와 각질이 여러 부위에서 관찰되어 2단계로 확정됐습니다.",
-      currentCopy: "붉은기·각질이 여러 부위에서 관찰됩니다.",
-      nextCopy: "염증 소견의 범위와 강도가 더 커질 수 있습니다.",
-      goal: "홈케어 전환 기준 충족까지",
-      protocols: [
-        ["01", "프리컨디셔닝", "각질·피지를 정돈해 관리 환경을 준비합니다.", "기본"],
-        ["02", "ARCHE 두피 관리", "두피 장벽 관리 목적으로 안내합니다.", "기본"],
-        ["＋", "추가 치료 검토", "적응증과 단계 매핑 승인 시에만 제안합니다.", "조건부"]
-      ]
+    "1+": {
+      name: "Almost clear+",
+      label: "거의 깨끗함+",
+      image: "assets/stage-1.jpg",
+      summary: "1단계보다 붉음과 잔각질이 조금 더 보이지만 아직 유지기에 가까운 단계입니다.",
+      symptoms: ["옅은 분홍빛 범위 증가", "모공 입구 잔각질", "피로·환절기에 반복 가능"],
+      metrics: {
+        sensitivity: "옅은 붉음이 1단계보다 조금 더 넓게 관찰되는 참고 상태입니다.",
+        scale: "일부 모공 입구에 하얀 잔각질이 모여 보일 수 있습니다.",
+        oil: "피로·환경 변화에 따라 번들거림이 나타날 수 있습니다."
+      }
     },
-    {
-      label: "적극 치료",
-      meaning: "적극 치료·경과 확인",
-      title: "두피 염증 3단계 · 적극 치료 구간",
-      summary: "염증 소견의 범위와 강도가 높아 적극적인 치료가 필요한 3단계로 확정됐습니다.",
-      currentCopy: "적극적인 치료와 경과 확인이 필요한 상태입니다.",
-      nextCopy: "집중 치료와 의료진 평가가 필요한 고위험 단계입니다.",
-      goal: "집중 관리 종료·전환 기준 충족까지",
-      protocols: [
-        ["01", "의료진 진료", "증상 범위와 악화 요인을 우선 확인합니다.", "필수"],
-        ["02", "집중 두피 관리", "승인된 단계별 기준에 따라 관리합니다.", "기본"],
-        ["03", "경과 재평가", "동일 조건 촬영으로 변화를 재확인합니다.", "필수"]
-      ]
+    "2": {
+      name: "Mild",
+      label: "경도",
+      image: "assets/stage-2.jpg",
+      summary: "붉음과 얇은 각질이 보이기 시작해 관리를 시작하기 좋은 단계입니다.",
+      symptoms: ["분홍~옅은 붉은빛", "얇고 하얀 각질", "모공 입구의 하얀·노르스름한 각질"],
+      metrics: {
+        sensitivity: "분홍빛에서 옅은 붉은빛이 넓게 관찰되는 경도 상태입니다.",
+        scale: "얇고 하얀 각질이 흩어져 보이고 모공 입구에 각질이 끼기 시작합니다.",
+        oil: "기름막이 살짝 번들거릴 수 있는 초기 유분 변화가 관찰됩니다."
+      }
     },
-    {
-      label: "집중 치료",
-      meaning: "의료진 집중 치료 필요",
-      title: "두피 염증 4단계 · 집중 치료 구간",
-      summary: "고도 염증 소견이 관찰되어 의료진의 집중 평가가 필요한 4단계로 확정됐습니다.",
-      currentCopy: "집중 치료와 의료진 평가가 필요한 고위험 단계입니다.",
-      nextCopy: "다음 단계 예측 대신 의료진 진료와 경과 확인을 우선합니다.",
-      goal: "고위험 상태 안정화·재평가까지",
-      protocols: [
-        ["01", "의료진 집중 진료", "고위험 소견과 감별 필요성을 확인합니다.", "필수"],
-        ["02", "승인 치료 계획", "의료진이 확정한 계획만 안내합니다.", "필수"],
-        ["03", "단기 경과 확인", "재평가 시점은 의료진이 결정합니다.", "필수"]
-      ]
+    "2+": {
+      name: "Mild+",
+      label: "경도+",
+      image: "assets/stage-2.jpg",
+      summary: "2단계보다 붉음·각질·유분 변화가 뚜렷해지는 경도 상단 단계입니다.",
+      symptoms: ["옅은 붉은 테가 뚜렷해짐", "하얀·노르스름한 각질 증가", "가려움이 시작될 수 있음"],
+      metrics: {
+        sensitivity: "모공 주변의 붉은 테와 옅은 붉음이 2단계보다 뚜렷합니다.",
+        scale: "하얀 각질과 노르스름한 각질이 여러 모공에서 보이기 시작합니다.",
+        oil: "두피 표면의 번들거림과 유분성 각질이 조금 더 뚜렷합니다."
+      }
+    },
+    "3": {
+      name: "Moderate",
+      label: "중등도",
+      image: "assets/stage-3.jpg",
+      summary: "붉음과 겹쳐 쌓인 각질이 명확해 집중 관리가 필요한 단계입니다.",
+      symptoms: ["한눈에 보이는 붉음", "겹쳐 쌓이는 각질", "노르스름하고 기름진 각질"],
+      metrics: {
+        sensitivity: "붉은기가 뚜렷하고 가는 혈관이 나뭇가지처럼 보일 수 있습니다.",
+        scale: "각질이 겹쳐 쌓이고 모공 주변을 테처럼 둘러싸기 시작합니다.",
+        oil: "노르스름하고 기름진 각질이 모공 입구를 덮는 중등도 상태입니다."
+      }
+    },
+    "3+": {
+      name: "Moderate+",
+      label: "중등도+",
+      image: "assets/stage-3.jpg",
+      summary: "중등도 증상이 넓고 뚜렷하며 화끈거림·진물 가능성을 함께 확인해야 하는 단계입니다.",
+      symptoms: ["넓고 뚜렷한 붉음", "머리카락 사이로 보이는 각질", "화끈거림·진물 가능성"],
+      metrics: {
+        sensitivity: "넓은 붉음과 모공 주변 붉은 테가 3단계보다 강하게 관찰됩니다.",
+        scale: "겹친 각질이 머리카락 사이에서도 눈에 띄는 상태입니다.",
+        oil: "기름진 각질과 번들거림이 넓게 보여 집중 관리가 필요합니다."
+      }
+    },
+    "4": {
+      name: "Severe",
+      label: "중증",
+      image: "assets/stage-4.jpg",
+      summary: "강한 붉음과 두껍고 거친 각질이 넓게 보이며 우선 진료가 필요한 단계입니다.",
+      symptoms: ["진하고 강한 붉은빛", "두껍고 거친 판 모양 각질", "각질로 가려진 모공 입구"],
+      metrics: {
+        sensitivity: "진하고 강한 붉은빛이 넓게 퍼져 있고 염증 범위를 직접 확인해야 합니다.",
+        scale: "두껍고 거친 판 모양 각질이 모공 입구를 덮고 있습니다.",
+        oil: "각질과 유분성 부착물이 엉겨 모발이 붙어 보일 수 있는 중증 상태입니다."
+      }
+    },
+    "4+": {
+      name: "Severe+",
+      label: "최악 상태 예시",
+      image: "assets/stage-4.jpg",
+      summary: "4단계보다 악화된 최악 상태를 설명하기 위한 예시 단계입니다. 별도 의료 기준 확정이 필요합니다.",
+      symptoms: ["최악 상태 비교용", "환자 현재 결과로 사용하지 않음", "의료진 기준·이미지 확정 필요"],
+      metrics: {
+        sensitivity: "4+단계의 독립 기준은 제공 자료에 없어 의료진 확정이 필요합니다.",
+        scale: "4+단계의 독립 각질 기준과 대표 사진은 별도 확정이 필요합니다.",
+        oil: "4+단계의 독립 유분 기준은 별도 확정이 필요합니다."
+      }
     }
+  };
+
+  const treatmentGuidelines = {
+    "2": { required: "프리컨디셔닝 + 아르케", count: "10–15회", enhanced: "보톡스" },
+    "2+": { required: "프리컨디셔닝 + 아르케", count: "15–20회", enhanced: "보톡스 + 리쥬란" },
+    "3": { required: "프리컨디셔닝 + 아르케", count: "20–25회", enhanced: "보톡스 + 줄기세포 배양액" },
+    "3+": { required: "프리컨디셔닝 + 아르케", count: "25–30회", enhanced: "보톡스 + 엑소좀" },
+    "4": { required: "프리컨디셔닝 + 아르케", count: "30–40회", enhanced: "보톡스 + 엑소좀" }
+  };
+
+  const metricDefinitions = [
+    { key: "sensitivity", label: "민감성(붉음)", icon: "R" },
+    { key: "scale", label: "각질", icon: "S" },
+    { key: "oil", label: "유분", icon: "O" }
   ];
 
   const state = {
     photos: [],
     primaryPhotoId: null,
-    activePhotoId: null,
-    stage: 2,
-    redness: 2,
-    scale: 2,
-    sebum: 1,
-    note: "",
-    reviewed: false,
-    handedOff: false,
-    analysisTimer: null,
-    auditLog: [],
-    capture: { site: "vertex", device: "demo-device", magnification: "x100" }
+    galleryPhotoId: null,
+    suggestedStage: "3+",
+    finalStage: "3+",
+    metrics: { sensitivity: 18, scale: 12, oil: 24 },
+    confirmed: false,
+    handedOff: false
   };
 
-  const views = Array.from(document.querySelectorAll(".view"));
-  const pageTitle = document.getElementById("pageTitle");
-  const photoInput = document.getElementById("photoInput");
-  const photoGrid = document.getElementById("photoGrid");
-  const uploadCount = document.getElementById("uploadCount");
-  const analyzeButton = document.getElementById("analyzeButton");
-  const uploadHelper = document.getElementById("uploadHelper");
-  const uploadZone = document.getElementById("uploadZone");
-  const validationMessage = document.getElementById("validationMessage");
-  const reviewPhoto = document.getElementById("reviewPhoto");
-  const reviewThumbnails = document.getElementById("reviewThumbnails");
-  const resultPhoto = document.getElementById("resultPhoto");
-  const resultThumbnails = document.getElementById("resultThumbnails");
-  const evidencePhoto = document.getElementById("evidencePhoto");
-  const stageSelect = document.getElementById("stageSelect");
-  const reviewForm = document.getElementById("reviewForm");
-  const handoffButton = document.getElementById("handoffButton");
-  const footerHandoffButton = document.getElementById("footerHandoffButton");
-  const toast = document.getElementById("toast");
+  const $ = (id) => document.getElementById(id);
+  const views = { home: $("homeView"), upload: $("uploadView"), analysis: $("analysisView"), result: $("resultView") };
+  const photoInput = $("photoInput");
+  const uploadZone = $("uploadZone");
+  const photoGrid = $("photoGrid");
+  const analyzeButton = $("analyzeButton");
+  const stageSelect = $("stageSelect");
+  const reviewForm = $("reviewForm");
+  const handoffButton = $("handoffButton");
+  const footerHandoffButton = $("footerHandoffButton");
+  let analysisTimers = [];
+  let toastTimer = null;
 
-  function showView(viewId, title) {
-    views.forEach((view) => view.classList.toggle("is-visible", view.id === viewId));
-    pageTitle.textContent = title;
+  function showView(name) {
+    Object.entries(views).forEach(([key, node]) => node.classList.toggle("is-visible", key === name));
+    const titles = { home: "두피 진단", upload: "두피 사진 등록", analysis: "두피 분석", result: "두피 진단 결과" };
+    $("pageTitle").textContent = titles[name];
     window.scrollTo({ top: 0, behavior: "smooth" });
-    closeMobileMenu();
   }
 
   function showToast(message) {
-    toast.textContent = message;
-    toast.hidden = false;
-    window.clearTimeout(showToast.timer);
-    showToast.timer = window.setTimeout(() => {
-      toast.hidden = true;
-    }, 3200);
-  }
-
-  function addAudit(action, detail) {
-    const time = new Intl.DateTimeFormat("ko-KR", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit"
-    }).format(new Date());
-    state.auditLog.unshift({ time, action, detail });
-    renderAuditLog();
-  }
-
-  function renderAuditLog() {
-    const list = document.getElementById("auditLogList");
-    if (!list) return;
-    list.replaceChildren();
-    const entries = state.auditLog.length
-      ? state.auditLog
-      : [{ time: "—", action: "대기", detail: "아직 기록된 작업이 없습니다." }];
-    entries.forEach((entry) => {
-      const item = document.createElement("li");
-      const time = document.createElement("time");
-      time.textContent = entry.time;
-      const copy = document.createElement("span");
-      const title = document.createElement("b");
-      title.textContent = entry.action;
-      const detail = document.createElement("small");
-      detail.textContent = entry.detail;
-      copy.append(title, detail);
-      item.append(time, copy);
-      list.appendChild(item);
-    });
+    window.clearTimeout(toastTimer);
+    $("toast").textContent = message;
+    $("toast").hidden = false;
+    toastTimer = window.setTimeout(() => { $("toast").hidden = true; }, 2800);
   }
 
   function showValidation(message) {
-    validationMessage.textContent = message;
-    validationMessage.hidden = !message;
+    $("validationMessage").textContent = message;
+    $("validationMessage").hidden = !message;
   }
 
   function formatBytes(bytes) {
-    if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))}KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)}MB`;
+    return bytes ? `${(bytes / 1024 / 1024).toFixed(1)}MB` : "합성 샘플";
   }
 
-  function createButton(label, handler, className = "") {
+  function validateFiles(fileList) {
+    const accepted = [];
+    const errors = [];
+    const remaining = MAX_PHOTOS - state.photos.length;
+    Array.from(fileList).slice(0, remaining).forEach((file) => {
+      if (!ACCEPTED_TYPES.has(file.type)) errors.push(`${file.name}: 지원하지 않는 형식입니다.`);
+      else if (file.size > MAX_BYTES) errors.push(`${file.name}: 10MB를 초과했습니다.`);
+      else accepted.push(file);
+    });
+    if (fileList.length > remaining) errors.push(`최대 ${MAX_PHOTOS}장까지만 등록할 수 있습니다.`);
+    return { accepted, errors };
+  }
+
+  function createPhotoFromFile(file) {
+    return {
+      id: `photo-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      url: URL.createObjectURL(file),
+      ownedUrl: true,
+      synthetic: false
+    };
+  }
+
+  function addPhotos(fileList) {
+    const { accepted, errors } = validateFiles(fileList);
+    accepted.forEach((file) => state.photos.push(createPhotoFromFile(file)));
+    if (!state.primaryPhotoId && state.photos[0]) state.primaryPhotoId = state.photos[0].id;
+    showValidation(errors.join(" "));
+    renderUploadPhotos();
+  }
+
+  function loadSamplePhotos() {
+    const samples = [
+      { name: "합성-민감성-샘플.jpg", url: "assets/stage-2.jpg" },
+      { name: "합성-각질-샘플.jpg", url: "assets/stage-3.jpg" },
+      { name: "합성-유분-샘플.jpg", url: "assets/stage-4.jpg" }
+    ];
+    const remaining = MAX_PHOTOS - state.photos.length;
+    if (remaining === 0) {
+      showValidation("최대 6장까지 등록되어 있습니다.");
+      return;
+    }
+    samples.slice(0, remaining).forEach((sample, index) => {
+      state.photos.push({
+        id: `sample-${Date.now()}-${index}`,
+        name: sample.name,
+        type: "image/jpeg",
+        size: 0,
+        url: sample.url,
+        ownedUrl: false,
+        synthetic: true
+      });
+    });
+    if (!state.primaryPhotoId) state.primaryPhotoId = state.photos[0].id;
+    showValidation("");
+    renderUploadPhotos();
+  }
+
+  function createActionButton(label, handler, className = "") {
     const button = document.createElement("button");
     button.type = "button";
     button.textContent = label;
@@ -181,44 +248,20 @@
     return button;
   }
 
-  function addFiles(fileList) {
-    const errors = [];
-    const availableSlots = MAX_PHOTOS - state.photos.length;
-    Array.from(fileList).slice(0, availableSlots).forEach((file) => {
-      if (!ACCEPTED_TYPES.has(file.type)) {
-        errors.push(`${file.name}: 지원하지 않는 형식입니다.`);
-        return;
-      }
-      if (file.size > MAX_BYTES) {
-        errors.push(`${file.name}: 10MB를 초과했습니다.`);
-        return;
-      }
-      const id = `photo-${Date.now()}-${crypto.getRandomValues(new Uint32Array(1))[0]}`;
-      state.photos.push({ id, file, url: URL.createObjectURL(file) });
-      if (!state.primaryPhotoId) state.primaryPhotoId = id;
-      addAudit("사진 등록", `${file.name} · ${formatBytes(file.size)}`);
-    });
-    if (fileList.length > availableSlots) errors.push(`사진은 최대 ${MAX_PHOTOS}장까지 등록할 수 있습니다.`);
-    showValidation(errors.join(" "));
-    renderUploadPhotos();
-  }
-
   function renderUploadPhotos() {
     photoGrid.replaceChildren();
     state.photos.forEach((photo, index) => {
       const card = document.createElement("article");
       card.className = `photo-card${state.primaryPhotoId === photo.id ? " is-primary" : ""}`;
-
       const image = document.createElement("img");
       image.src = photo.url;
-      image.alt = `업로드 사진 ${index + 1} 미리보기`;
-
+      image.alt = `등록 사진 ${index + 1} 미리보기`;
       const body = document.createElement("div");
       body.className = "photo-card-body";
       const title = document.createElement("div");
       title.className = "photo-card-title";
       const name = document.createElement("b");
-      name.textContent = photo.file.name;
+      name.textContent = photo.name;
       title.appendChild(name);
       if (state.primaryPhotoId === photo.id) {
         const tag = document.createElement("span");
@@ -226,34 +269,26 @@
         tag.textContent = "대표";
         title.appendChild(tag);
       }
-
       const meta = document.createElement("p");
       meta.className = "photo-meta";
-      meta.textContent = `${photo.file.type.replace("image/", "").toUpperCase()} · ${formatBytes(photo.file.size)}`;
-
+      meta.textContent = `${photo.synthetic ? "SYNTHETIC" : photo.type.replace("image/", "").toUpperCase()} · ${formatBytes(photo.size)}`;
       const actions = document.createElement("div");
       actions.className = "photo-card-actions";
-      if (state.primaryPhotoId !== photo.id) {
-        actions.appendChild(createButton("대표 지정", () => {
-          state.primaryPhotoId = photo.id;
-          renderUploadPhotos();
-        }));
-      }
-      if (index > 0) actions.appendChild(createButton("앞으로", () => movePhoto(index, index - 1)));
-      if (index < state.photos.length - 1) actions.appendChild(createButton("뒤로", () => movePhoto(index, index + 1)));
-      actions.appendChild(createButton("삭제", () => removePhoto(photo.id), "is-danger"));
-
+      if (state.primaryPhotoId !== photo.id) actions.appendChild(createActionButton("대표 지정", () => { state.primaryPhotoId = photo.id; renderUploadPhotos(); }));
+      if (index > 0) actions.appendChild(createActionButton("앞으로", () => movePhoto(index, index - 1)));
+      if (index < state.photos.length - 1) actions.appendChild(createActionButton("뒤로", () => movePhoto(index, index + 1)));
+      actions.appendChild(createActionButton("삭제", () => removePhoto(photo.id), "is-danger"));
       body.append(title, meta, actions);
       card.append(image, body);
       photoGrid.appendChild(card);
     });
-
-    uploadCount.textContent = String(state.photos.length);
+    $("uploadCount").textContent = String(state.photos.length);
     analyzeButton.disabled = state.photos.length === 0;
-    document.getElementById("photoPickerButton").disabled = state.photos.length >= MAX_PHOTOS;
-    uploadHelper.textContent = state.photos.length === 0
+    $("photoPickerButton").disabled = state.photos.length >= MAX_PHOTOS;
+    $("loadSampleButton").disabled = state.photos.length >= MAX_PHOTOS;
+    $("uploadHelper").textContent = state.photos.length === 0
       ? "사진을 1장 이상 등록하면 분석을 시작할 수 있습니다."
-      : `${state.photos.length}장 등록됨 · 사진은 브라우저 메모리에서만 사용됩니다.`;
+      : `${state.photos.length}장 등록됨 · 서버에 저장하지 않습니다.`;
   }
 
   function movePhoto(from, to) {
@@ -265,355 +300,414 @@
   function removePhoto(id) {
     const photo = state.photos.find((item) => item.id === id);
     if (!photo || !window.confirm("이 사진을 진단 세션에서 삭제할까요?")) return;
-    URL.revokeObjectURL(photo.url);
+    if (photo.ownedUrl) URL.revokeObjectURL(photo.url);
     state.photos = state.photos.filter((item) => item.id !== id);
     if (state.primaryPhotoId === id) state.primaryPhotoId = state.photos[0]?.id || null;
-    if (state.activePhotoId === id) state.activePhotoId = state.primaryPhotoId;
-    addAudit("사진 삭제", photo.file.name);
     renderUploadPhotos();
   }
 
   function clearPhotos() {
-    state.photos.forEach((photo) => URL.revokeObjectURL(photo.url));
+    state.photos.forEach((photo) => { if (photo.ownedUrl) URL.revokeObjectURL(photo.url); });
     state.photos = [];
     state.primaryPhotoId = null;
-    state.activePhotoId = null;
+    state.galleryPhotoId = null;
+    state.confirmed = false;
+    state.handedOff = false;
     renderUploadPhotos();
   }
 
-  function resetSession() {
-    if (state.photos.length && !window.confirm("현재 진단 내용을 지우고 새 진단을 시작할까요?")) return;
-    window.clearTimeout(state.analysisTimer);
-    clearPhotos();
-    state.stage = 2;
-    state.redness = 2;
-    state.scale = 2;
-    state.sebum = 1;
-    state.note = "";
-    state.reviewed = false;
-    state.handedOff = false;
-    state.auditLog = [];
-    state.capture = { site: "vertex", device: "demo-device", magnification: "x100" };
-    reviewForm.reset();
-    stageSelect.value = "2";
-    document.getElementById("rednessInput").value = "2";
-    document.getElementById("scaleInput").value = "2";
-    document.getElementById("sebumInput").value = "1";
-    document.getElementById("captureSite").value = "vertex";
-    document.getElementById("captureDevice").value = "demo-device";
-    document.getElementById("captureMagnification").value = "x100";
-    showResultTab("overview");
-    updateHandoffUI();
-    renderAuditLog();
-    showView("uploadView", "사진 등록");
+  function getPrimaryPhoto() {
+    return state.photos.find((photo) => photo.id === state.primaryPhotoId) || state.photos[0] || null;
   }
 
-  function activePhoto() {
-    if (!state.activePhotoId || !state.photos.some((photo) => photo.id === state.activePhotoId)) {
-      state.activePhotoId = state.primaryPhotoId || state.photos[0]?.id || null;
+  function normalizePatientStage(stage) {
+    const value = String(stage);
+    if (PATIENT_STAGES.includes(value)) return value;
+    const numeric = Number.parseFloat(value);
+    if (!Number.isFinite(numeric) || numeric <= 2) return "2";
+    if (numeric >= 4) return "4";
+    return "3";
+  }
+
+  function getNextStage(stage) {
+    const transitions = { "2": "2+", "2+": "3", "3": "3+", "3+": "4", "4": "4+" };
+    return transitions[normalizePatientStage(stage)] || "4+";
+  }
+
+  function seedFromPhotos() {
+    return state.photos.reduce((total, photo, photoIndex) => {
+      const nameSeed = Array.from(photo.name).reduce((sum, char) => sum + char.charCodeAt(0), 0);
+      return total + nameSeed + photo.size + ((photoIndex + 1) * 97);
+    }, 211);
+  }
+
+  function generateDemoAssessment() {
+    const stageByCount = ["2", "2+", "3", "3+", "4", "4"];
+    const suggestedStage = stageByCount[Math.max(0, Math.min(state.photos.length - 1, stageByCount.length - 1))];
+    const seed = seedFromPhotos();
+    return {
+      stage: suggestedStage,
+      metrics: {
+        sensitivity: 1 + ((seed * 7 + 3) % 30),
+        scale: 1 + ((seed * 11 + 9) % 30),
+        oil: 1 + ((seed * 13 + 17) % 30)
+      }
+    };
+  }
+
+  function renderPatientGallery() {
+    if (!state.galleryPhotoId || !state.photos.some((photo) => photo.id === state.galleryPhotoId)) state.galleryPhotoId = state.primaryPhotoId || state.photos[0]?.id || null;
+    const active = state.photos.find((photo) => photo.id === state.galleryPhotoId);
+    $("patientGallery").replaceChildren();
+    $("thumbnailStrip").replaceChildren();
+    if (active) {
+      const image = document.createElement("img");
+      image.src = active.url;
+      image.alt = "선택한 환자 두피 사진";
+      $("patientGallery").appendChild(image);
     }
-    return state.photos.find((photo) => photo.id === state.activePhotoId) || null;
-  }
-
-  function setPhoto(container, photo, alt) {
-    container.querySelectorAll("img").forEach((image) => image.remove());
-    if (!photo) return;
-    const image = document.createElement("img");
-    image.src = photo.url;
-    image.alt = alt;
-    container.prepend(image);
-  }
-
-  function renderThumbnails(container) {
-    container.replaceChildren();
     state.photos.forEach((photo, index) => {
       const button = document.createElement("button");
       button.type = "button";
-      button.className = `thumbnail-button${photo.id === state.activePhotoId ? " is-active" : ""}`;
-      button.setAttribute("aria-label", `진단 사진 ${index + 1} 보기`);
-      const image = document.createElement("img");
-      image.src = photo.url;
-      image.alt = "";
-      button.appendChild(image);
-      button.addEventListener("click", () => {
-        state.activePhotoId = photo.id;
-        renderAllGalleries();
-      });
-      container.appendChild(button);
+      button.className = `thumbnail-button${photo.id === state.galleryPhotoId ? " is-active" : ""}`;
+      button.setAttribute("aria-label", `환자 사진 ${index + 1} 보기`);
+      const thumb = document.createElement("img");
+      thumb.src = photo.url;
+      thumb.alt = "";
+      button.appendChild(thumb);
+      button.addEventListener("click", () => { state.galleryPhotoId = photo.id; renderPatientGallery(); });
+      $("thumbnailStrip").appendChild(button);
     });
+    $("galleryPhotoCount").textContent = `${state.photos.length}장`;
   }
 
-  function renderAllGalleries() {
-    const photo = activePhoto();
-    setPhoto(reviewPhoto, photo, "의료진 검토용 두피 사진");
-    setPhoto(resultPhoto, photo, "자동 결과 두피 사진");
-    setPhoto(evidencePhoto, photo, "판정 근거 표시 두피 사진");
-    renderThumbnails(reviewThumbnails);
-    renderThumbnails(resultThumbnails);
-    document.getElementById("reviewPhotoCount").textContent = `${state.photos.length}장`;
-  }
-
-  function intensity(value) {
-    const levels = [
-      { label: "미관찰", finding: "뚜렷한 소견이 관찰되지 않음", pill: "미관찰", width: 8 },
-      { label: "경도 관찰", finding: "일부 부위에서 경미한 소견 관찰", pill: "경도", width: 34 },
-      { label: "중등도 관찰", finding: "여러 부위에서 중등도 소견 관찰", pill: "관찰됨", width: 67 },
-      { label: "고도 관찰", finding: "넓은 범위에서 고도 소견 관찰", pill: "고도", width: 100 }
-    ];
-    return levels[Math.max(0, Math.min(3, Number(value)))] || levels[0];
-  }
-
-  function renderStageRail() {
-    const rail = document.getElementById("stageRail");
-    rail.replaceChildren();
-    stages.forEach((stage, index) => {
-      const item = document.createElement("div");
-      if (index === state.stage) item.className = "is-current";
-      const number = document.createElement("strong");
-      number.textContent = String(index);
-      const label = document.createTextNode(stage.label);
-      item.append(number, label);
-      rail.appendChild(item);
-    });
-  }
-
-  function createPathNode(kind, pillText, title, copy) {
-    const node = document.createElement("article");
-    node.className = `path-node ${kind}`;
-    const pill = document.createElement("span");
-    pill.className = `stage-pill${kind === "is-current" ? " is-amber" : kind === "is-final" ? " is-red" : ""}`;
-    pill.textContent = pillText;
-    const heading = document.createElement("strong");
-    heading.textContent = title;
-    const paragraph = document.createElement("p");
-    paragraph.textContent = copy;
-    node.append(pill, heading, paragraph);
-    return node;
-  }
-
-  function createPathArrow() {
-    const arrow = document.createElement("div");
-    arrow.className = "path-arrow";
-    arrow.setAttribute("aria-hidden", "true");
-    arrow.textContent = "→";
-    return arrow;
-  }
-
-  function renderProgression() {
-    const path = document.getElementById("progressionPath");
-    path.replaceChildren();
-    const current = stages[state.stage];
-    path.appendChild(createPathNode("is-current", "현재 진단", `${state.stage}단계 · ${current.label}`, current.currentCopy));
-
-    if (state.stage < 4) {
-      const nextStage = state.stage + 1;
-      path.appendChild(createPathArrow());
-      path.appendChild(createPathNode("is-next", "다음 단계 가능성", `${nextStage}단계 참고`, current.nextCopy));
-      if (nextStage < 4) {
-        path.appendChild(createPathArrow());
-        path.appendChild(createPathNode("is-final", "장기 위험 참고", "4단계 참고", "현재 진단이 아니며 장기 관리 부족 시의 고위험 예시입니다."));
-      }
-    } else {
-      path.appendChild(createPathArrow());
-      path.appendChild(createPathNode("is-next", "다음 행동", "의료진 우선 평가", current.nextCopy));
-    }
-
-    const nodeCount = path.children.length;
-    path.style.gridTemplateColumns = nodeCount <= 3 ? "1fr 42px 1fr" : "1fr 42px 1fr 42px 1fr";
-  }
-
-  function renderProtocols() {
-    const list = document.getElementById("protocolList");
+  function renderList(id, items) {
+    const list = $(id);
     list.replaceChildren();
-    stages[state.stage].protocols.forEach(([numberText, titleText, copyText, tagText]) => {
-      const item = document.createElement("div");
-      item.className = "protocol";
-      const number = document.createElement("b");
-      number.textContent = numberText;
-      const copy = document.createElement("div");
-      const title = document.createElement("strong");
-      title.textContent = titleText;
-      const description = document.createElement("p");
-      description.textContent = copyText;
-      copy.append(title, description);
-      const tag = document.createElement("span");
-      tag.className = `stage-pill${tagText === "조건부" ? " is-gray" : ""}`;
-      tag.textContent = tagText;
-      item.append(number, copy, tag);
+    items.forEach((text) => {
+      const item = document.createElement("li");
+      item.textContent = text;
       list.appendChild(item);
     });
   }
 
-  function updateFinding(prefix, value, noun) {
-    const item = intensity(value);
-    document.getElementById(`${prefix}Label`).textContent = item.label;
-    document.getElementById(`${prefix}Meter`).style.width = `${item.width}%`;
-    document.getElementById(`${prefix}Finding`).textContent = `${item.finding.replace("소견", noun)}`;
-    document.getElementById(`${prefix}FindingPill`).textContent = item.pill;
-    document.getElementById(`${prefix}FindingPill`).className = `stage-pill${Number(value) >= 2 ? " is-amber" : ""}`;
+  function renderStageReference() {
+    const container = $("stageReferenceGrid");
+    container.replaceChildren();
+    ALL_STAGES.forEach((stageKey) => {
+      const data = stageData[stageKey];
+      const tile = document.createElement("article");
+      tile.className = `stage-tile${stageKey === state.finalStage ? " is-current" : ""}`;
+      const imageWrap = document.createElement("div");
+      imageWrap.className = "stage-tile-image";
+      const image = document.createElement("img");
+      image.src = data.image;
+      image.alt = `${stageKey}단계 ${data.label} 참고 이미지`;
+      imageWrap.appendChild(image);
+      if (stageKey.includes("+")) {
+        const assetBadge = document.createElement("span");
+        assetBadge.textContent = stageKey === "4+" ? "자산 확인 필요" : "+단계 공용 이미지";
+        imageWrap.appendChild(assetBadge);
+      }
+      const text = document.createElement("div");
+      const title = document.createElement("b");
+      title.textContent = `${stageKey}단계 · ${data.name}`;
+      const caption = document.createElement("small");
+      caption.textContent = data.label;
+      text.append(title, caption);
+      tile.append(imageWrap, text);
+      container.appendChild(tile);
+    });
   }
 
-  function renderResult() {
-    const stage = stages[state.stage];
-    document.getElementById("resultMetaStage").textContent = `${state.stage}단계 · ${stage.label}`;
-    document.getElementById("overviewTitle").textContent = stage.title;
-    document.getElementById("overviewStagePill").textContent = `현재 ${state.stage}단계`;
-    document.getElementById("stageMeaningPill").textContent = stage.meaning;
-    document.getElementById("overviewStageNumber").textContent = String(state.stage);
-    document.getElementById("overviewSummary").textContent = stage.summary;
-    document.getElementById("treatmentStagePill").textContent = `${state.stage}단계 · ${stage.label}`;
-    document.getElementById("treatmentGoal").textContent = stage.goal;
-    document.getElementById("resultReviewNote").textContent = state.note || "등록된 메모가 없습니다.";
-    const reviewStatus = document.getElementById("reviewStatus");
-    reviewStatus.textContent = state.reviewed ? "예외 검토 완료" : "자동 판정 결과";
-
-    updateFinding("redness", state.redness, "붉은기");
-    updateFinding("scale", state.scale, "각질");
-    updateFinding("sebum", state.sebum, "유분");
-    renderStageRail();
-    renderProgression();
-    renderProtocols();
-    renderAllGalleries();
-    renderAuditLog();
-    updateHandoffUI();
+  function getMetricPhoto(index) {
+    return state.photos[index] || state.photos[0] || null;
   }
 
-  function showResultTab(name) {
-    document.querySelectorAll("[data-result-tab]").forEach((button) => {
-      button.setAttribute("aria-selected", String(button.dataset.resultTab === name));
+  function getSeverityLabel(score) {
+    if (score <= 10) return "매우 심각";
+    if (score <= 20) return "심각";
+    return "주의";
+  }
+
+  function renderMetricCards() {
+    const grid = $("metricGrid");
+    const data = stageData[state.finalStage];
+    grid.replaceChildren();
+    metricDefinitions.forEach((metric, index) => {
+      const score = state.metrics[metric.key];
+      const photo = getMetricPhoto(index);
+      const card = document.createElement("article");
+      card.className = "metric-card";
+      card.dataset.metric = metric.key;
+      const head = document.createElement("div");
+      head.className = "metric-card-head";
+      const icon = document.createElement("span");
+      icon.textContent = metric.icon;
+      const title = document.createElement("div");
+      const heading = document.createElement("h4");
+      heading.textContent = metric.label;
+      const severity = document.createElement("small");
+      severity.textContent = getSeverityLabel(score);
+      title.append(heading, severity);
+      head.append(icon, title);
+      const imageWrap = document.createElement("div");
+      imageWrap.className = "metric-image";
+      if (photo) {
+        const image = document.createElement("img");
+        image.src = photo.url;
+        image.alt = `${metric.label} 상태 참고 사진`;
+        imageWrap.appendChild(image);
+      }
+      const scoreRow = document.createElement("div");
+      scoreRow.className = "metric-score-row";
+      const scoreText = document.createElement("strong");
+      scoreText.textContent = String(score);
+      const outOf = document.createElement("span");
+      outOf.textContent = "/ 100";
+      scoreRow.append(scoreText, outOf);
+      const gauge = document.createElement("div");
+      gauge.className = "metric-gauge";
+      gauge.setAttribute("role", "img");
+      gauge.setAttribute("aria-label", `${metric.label} 점수 ${score}점, 0에 가까울수록 심각`);
+      const track = document.createElement("div");
+      track.className = "metric-gauge-track";
+      const marker = document.createElement("span");
+      marker.className = "metric-gauge-marker";
+      marker.style.left = `${score}%`;
+      track.appendChild(marker);
+      const labels = document.createElement("div");
+      labels.className = "metric-gauge-labels";
+      const serious = document.createElement("span");
+      serious.textContent = "심각 0";
+      const normal = document.createElement("span");
+      normal.textContent = "정상 100";
+      labels.append(serious, normal);
+      gauge.append(track, labels);
+      const description = document.createElement("p");
+      description.textContent = data.metrics[metric.key];
+      card.append(head, imageWrap, scoreRow, gauge, description);
+      grid.appendChild(card);
     });
-    document.querySelectorAll("[data-result-panel]").forEach((panel) => {
-      panel.classList.toggle("is-active", panel.dataset.resultPanel === name);
-    });
-    const nav = document.querySelector(".result-nav");
-    if (document.getElementById("resultView").classList.contains("is-visible")) {
-      window.scrollTo({ top: Math.max(0, nav.offsetTop - 95), behavior: "smooth" });
+  }
+
+  function buildProgressionCard(kind, stageKey, photoUrl, title, description) {
+    const card = document.createElement("article");
+    card.className = `progression-card ${kind}`;
+    card.dataset.progressionCard = kind;
+    const image = document.createElement("img");
+    image.src = photoUrl;
+    image.alt = `${stageKey}단계 ${title} 이미지`;
+    const badge = document.createElement("span");
+    badge.className = "progression-badge";
+    badge.textContent = title;
+    const heading = document.createElement("h4");
+    heading.textContent = `${stageKey}단계`;
+    const body = document.createElement("p");
+    body.textContent = description;
+    card.append(image, badge, heading, body);
+    return card;
+  }
+
+  function buildProgressionArrow() {
+    const arrow = document.createElement("div");
+    arrow.className = "progression-arrow";
+    arrow.setAttribute("aria-hidden", "true");
+    const icon = document.createElement("span");
+    icon.textContent = "→";
+    const duration = document.createElement("small");
+    duration.textContent = "2–4개월";
+    arrow.append(icon, duration);
+    return arrow;
+  }
+
+  function renderProgression() {
+    const grid = $("progressionGrid");
+    const primary = getPrimaryPhoto();
+    const current = state.finalStage;
+    const next = getNextStage(current);
+    grid.replaceChildren();
+    grid.append(
+      buildProgressionCard("current", current, primary?.url || stageData[current].image, "현재 상태", stageData[current].label),
+      buildProgressionArrow(),
+      buildProgressionCard("next", next, stageData[next].image, "다음 단계 예시", stageData[next].summary),
+      buildProgressionArrow(),
+      buildProgressionCard("worst", "4+", stageData["4+"].image, "최악 상태 예시", stageData["4+"].summary)
+    );
+  }
+
+  function renderTreatmentPlan() {
+    const guideline = treatmentGuidelines[state.finalStage];
+    const primary = getPrimaryPhoto();
+    $("treatmentPatientImage").replaceChildren();
+    if (primary) {
+      const image = document.createElement("img");
+      image.src = primary.url;
+      image.alt = "현재 환자 대표 두피 사진";
+      $("treatmentPatientImage").appendChild(image);
     }
+    $("treatmentStage").textContent = `${state.finalStage}단계`;
+    $("treatmentPatientSummary").textContent = stageData[state.finalStage].summary;
+    $("requiredTreatmentTitle").textContent = guideline.required;
+    $("requiredTreatmentCount").textContent = guideline.count;
+    $("enhancedTreatmentTitle").textContent = guideline.enhanced;
+    $("treatmentStatus").textContent = state.confirmed ? "의료진 확정 기준" : "예상 치료안 · 확정 전";
   }
 
-  function updateHandoffUI() {
-    const label = state.handedOff ? "상담 인계 완료" : "상담 인계";
-    handoffButton.textContent = label;
-    footerHandoffButton.textContent = state.handedOff ? "상담 인계 완료" : "상담실장에게 인계";
-    handoffButton.disabled = state.handedOff;
-    footerHandoffButton.disabled = state.handedOff;
-    const source = state.reviewed ? "예외 검토" : "자동 판정";
-    document.getElementById("handoffStatusText").textContent = state.handedOff
-      ? `${source} · 인계 완료`
-      : `${source} · 인계 대기`;
+  function renderCases() {
+    const current = state.finalStage;
+    const adjacent = getNextStage(current);
+    $("caseAStartImage").src = stageData[current].image;
+    $("caseAStartImage").alt = `${current}단계 참고 이미지`;
+    $("caseAStartLabel").textContent = `${current}단계 시작 참고`;
+    $("caseBStartImage").src = stageData[adjacent].image;
+    $("caseBStartImage").alt = `${adjacent}단계 참고 이미지`;
+    $("caseBStartLabel").textContent = `${adjacent}단계 인접 참고`;
   }
 
-  function handoff() {
-    if (state.handedOff) return;
-    if (!window.confirm("확정된 진단 결과를 상담실장에게 인계할까요?")) return;
-    state.handedOff = true;
-    addAudit("상담 인계", "결과와 기준표 버전을 상담실장에게 인계함");
-    updateHandoffUI();
-    showToast("상담 인계가 완료되었습니다. 이 기록은 새로고침하면 사라집니다.");
+  function updateHandoffButtons() {
+    if (state.handedOff) {
+      handoffButton.textContent = "상담 인계 완료";
+      footerHandoffButton.textContent = "상담 인계 완료";
+      handoffButton.disabled = true;
+      footerHandoffButton.disabled = true;
+      return;
+    }
+    handoffButton.textContent = "상담 인계";
+    footerHandoffButton.textContent = "상담실장에게 인계";
+    handoffButton.disabled = !state.confirmed;
+    footerHandoffButton.disabled = !state.confirmed;
   }
 
-  function openUpload() {
-    showView("uploadView", "사진 등록");
+  function updateDiagnosisUI() {
+    const data = stageData[state.finalStage];
+    $("displayStage").textContent = `${state.finalStage}단계`;
+    $("displayStageName").textContent = data.name;
+    $("stageSummary").textContent = data.summary;
+    renderList("symptomList", data.symptoms);
+    const status = $("reviewStatus");
+    status.textContent = state.confirmed ? "의료진 확정" : "데모 제안 · 미확정";
+    status.className = `status-badge ${state.confirmed ? "is-confirmed" : "is-pending"}`;
+    renderStageReference();
+    renderMetricCards();
+    renderProgression();
+    renderTreatmentPlan();
+    renderCases();
+    updateHandoffButtons();
+  }
+
+  function prepareResult() {
+    const assessment = generateDemoAssessment();
+    state.suggestedStage = normalizePatientStage(assessment.stage);
+    state.finalStage = state.suggestedStage;
+    state.metrics = assessment.metrics;
+    state.confirmed = false;
+    state.handedOff = false;
+    stageSelect.value = state.finalStage;
+    $("changeReason").value = "";
+    $("reviewNote").value = "";
+    $("reviewError").hidden = true;
+    $("analysisDate").textContent = new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+    renderPatientGallery();
+    updateDiagnosisUI();
+  }
+
+  function clearAnalysisTimers() {
+    analysisTimers.forEach((timer) => window.clearTimeout(timer));
+    analysisTimers = [];
+  }
+
+  function setAnalysisStep(activeIndex) {
+    document.querySelectorAll("[data-analysis-step]").forEach((node, index) => {
+      node.classList.toggle("is-done", index < activeIndex);
+      node.classList.toggle("is-active", index === activeIndex);
+    });
   }
 
   function startAnalysis() {
-    if (!state.photos.length) return;
-    showValidation("");
-    showView("analysisView", "데모 분석 중");
-    state.capture = {
-      site: document.getElementById("captureSite").value,
-      device: document.getElementById("captureDevice").value,
-      magnification: document.getElementById("captureMagnification").value
-    };
-    addAudit("품질 확인", `${state.photos.length}장 · 형식과 용량 통과`);
-    addAudit("분석 시작", `${state.capture.site} · ${state.capture.device} · ${state.capture.magnification}`);
-    window.clearTimeout(state.analysisTimer);
-    state.analysisTimer = window.setTimeout(() => {
-      state.activePhotoId = state.primaryPhotoId || state.photos[0]?.id || null;
-      state.reviewed = false;
-      state.handedOff = false;
-      addAudit("자동 결과 생성", "합성 2단계 · 기준표 VER.4.1 적용");
-      renderResult();
-      showResultTab("overview");
-      showView("resultView", "자동 진단 결과");
-    }, 900);
+    if (state.photos.length === 0) return;
+    clearAnalysisTimers();
+    setAnalysisStep(0);
+    showView("analysis");
+    analysisTimers.push(window.setTimeout(() => setAnalysisStep(1), 260));
+    analysisTimers.push(window.setTimeout(() => setAnalysisStep(2), 620));
+    analysisTimers.push(window.setTimeout(() => {
+      prepareResult();
+      showView("result");
+    }, 980));
   }
 
-  function closeMobileMenu() {
-    document.body.classList.remove("sidebar-open");
-    document.getElementById("mobileMenuButton").setAttribute("aria-expanded", "false");
-    document.getElementById("sidebarBackdrop").hidden = true;
+  function confirmReview(event) {
+    event.preventDefault();
+    const selectedStage = normalizePatientStage(stageSelect.value);
+    const reason = $("changeReason").value.trim();
+    if (!PATIENT_STAGES.includes(selectedStage)) {
+      $("reviewError").textContent = "허용된 환자 결과 단계를 선택해주세요.";
+      $("reviewError").hidden = false;
+      return;
+    }
+    if (selectedStage !== state.suggestedStage && !reason) {
+      $("reviewError").textContent = "제안 단계와 다르게 확정할 때는 수정 사유를 입력해주세요.";
+      $("reviewError").hidden = false;
+      $("changeReason").focus();
+      return;
+    }
+    state.finalStage = selectedStage;
+    state.confirmed = true;
+    state.handedOff = false;
+    $("reviewError").hidden = true;
+    updateDiagnosisUI();
+    showToast("의료진 확정 결과가 저장되었습니다. (로컬 데모)");
   }
 
-  document.getElementById("heroStartButton").addEventListener("click", openUpload);
-  document.getElementById("diagnosisStartButton").addEventListener("click", resetSession);
-  document.getElementById("backHomeButton").addEventListener("click", () => showView("homeView", "두피진단 VER.4.1"));
-  document.getElementById("cancelUploadButton").addEventListener("click", () => showView("homeView", "두피진단 VER.4.1"));
-  document.getElementById("photoPickerButton").addEventListener("click", () => photoInput.click());
-  photoInput.addEventListener("change", (event) => {
-    addFiles(event.target.files);
-    event.target.value = "";
+  function previewStageChange() {
+    state.finalStage = normalizePatientStage(stageSelect.value);
+    state.confirmed = false;
+    state.handedOff = false;
+    $("reviewError").hidden = true;
+    updateDiagnosisUI();
+  }
+
+  function handoff() {
+    if (!state.confirmed) return;
+    state.handedOff = true;
+    updateHandoffButtons();
+    showToast("상담실장에게 인계되었습니다. 실제 서버 저장은 연결 전입니다.");
+  }
+
+  [$("diagnosisStartButton"), $("heroStartButton")].forEach((button) => button.addEventListener("click", () => showView("upload")));
+  $("photoPickerButton").addEventListener("click", () => photoInput.click());
+  $("loadSampleButton").addEventListener("click", loadSamplePhotos);
+  photoInput.addEventListener("change", (event) => { addPhotos(event.target.files); event.target.value = ""; });
+
+  ["dragenter", "dragover"].forEach((name) => uploadZone.addEventListener(name, (event) => {
+    event.preventDefault();
+    uploadZone.classList.add("is-dragover");
+  }));
+  ["dragleave", "drop"].forEach((name) => uploadZone.addEventListener(name, (event) => {
+    event.preventDefault();
+    uploadZone.classList.remove("is-dragover");
+  }));
+  uploadZone.addEventListener("drop", (event) => addPhotos(event.dataTransfer.files));
+
+  $("backHomeButton").addEventListener("click", () => showView("home"));
+  $("cancelUploadButton").addEventListener("click", () => {
+    if (state.photos.length > 0 && !window.confirm("등록한 사진을 모두 지우고 고객 차트로 돌아갈까요?")) return;
+    clearPhotos();
+    showView("home");
   });
+  $("backUploadButton").addEventListener("click", () => showView("upload"));
   analyzeButton.addEventListener("click", startAnalysis);
-  document.getElementById("backUploadButton").addEventListener("click", openUpload);
-  document.getElementById("editReviewButton").addEventListener("click", () => {
-    renderAllGalleries();
-    showView("reviewView", "예외 검토");
-  });
-  document.getElementById("printButton").addEventListener("click", () => window.print());
+  reviewForm.addEventListener("submit", confirmReview);
+  stageSelect.addEventListener("change", previewStageChange);
   handoffButton.addEventListener("click", handoff);
   footerHandoffButton.addEventListener("click", handoff);
-  document.getElementById("doctorEscalationButton").addEventListener("click", () => showToast("의료진 상담 요청 상태로 전환했습니다. 로컬 프로토타입이라 서버에는 저장되지 않습니다."));
+  $("printButton").addEventListener("click", () => window.print());
 
-  ["dragenter", "dragover"].forEach((eventName) => {
-    uploadZone.addEventListener(eventName, (event) => {
-      event.preventDefault();
-      uploadZone.classList.add("is-dragover");
-    });
-  });
-  ["dragleave", "drop"].forEach((eventName) => {
-    uploadZone.addEventListener(eventName, (event) => {
-      event.preventDefault();
-      uploadZone.classList.remove("is-dragover");
-    });
-  });
-  uploadZone.addEventListener("drop", (event) => addFiles(event.dataTransfer.files));
-
-  reviewForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    state.stage = Number(stageSelect.value);
-    state.redness = Number(document.getElementById("rednessInput").value);
-    state.scale = Number(document.getElementById("scaleInput").value);
-    state.sebum = Number(document.getElementById("sebumInput").value);
-    state.note = document.getElementById("reviewNote").value.trim();
-    state.reviewed = true;
-    state.handedOff = false;
-    addAudit("예외 검토 반영", `${state.stage}단계로 수정 · 사유 메모 ${state.note ? "기록" : "없음"}`);
-    renderResult();
-    showResultTab("overview");
-    showView("resultView", "예외 검토 결과");
-    showToast("예외 검토 결과가 새 버전으로 반영되었습니다.");
-  });
-
-  document.querySelectorAll("[data-result-tab]").forEach((button) => {
-    button.addEventListener("click", () => showResultTab(button.dataset.resultTab));
-  });
-  document.querySelectorAll("[data-next-tab]").forEach((button) => {
-    button.addEventListener("click", () => showResultTab(button.dataset.nextTab));
-  });
-
-  document.getElementById("mobileMenuButton").addEventListener("click", () => {
-    const isOpen = document.body.classList.toggle("sidebar-open");
-    document.getElementById("mobileMenuButton").setAttribute("aria-expanded", String(isOpen));
-    document.getElementById("sidebarBackdrop").hidden = !isOpen;
-  });
-  document.getElementById("sidebarBackdrop").addEventListener("click", closeMobileMenu);
-
-  window.addEventListener("pagehide", () => {
-    state.photos.forEach((photo) => URL.revokeObjectURL(photo.url));
+  window.addEventListener("beforeunload", () => {
+    state.photos.forEach((photo) => { if (photo.ownedUrl) URL.revokeObjectURL(photo.url); });
   });
 
   renderUploadPhotos();
-  renderAuditLog();
-  updateHandoffUI();
+  renderStageReference();
 })();
