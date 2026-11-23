@@ -4,9 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <meta name="description" content="르샤인 두피센터 CRM 두피진단 VER.2.1 로컬 프로토타입">
-  <title>르샤인 CRM · 두피 진단 VER.2.1</title>
-  <link rel="icon" href="data:,">
+  <meta name="description" content="르샤인 두피센터 CRM 두피진단 VER.4.1 로컬 프로토타입">
+  <title>르샤인 CRM · 두피진단 VER.4.1</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -19,7 +18,7 @@
 
       <button class="diagnosis-start-button" id="diagnosisStartButton" type="button" data-testid="start-diagnosis">
         <span aria-hidden="true">＋</span>
-        두피 진단 시작
+        새 두피 진단
       </button>
 
       <nav class="main-nav">
@@ -31,45 +30,49 @@
 
       <div class="sidebar-note">
         <span class="status-dot" aria-hidden="true"></span>
-        관리자 테스트 환경
+        로컬 테스트 환경
       </div>
     </aside>
 
     <main class="main-area">
       <header class="topbar">
-        <div>
+        <button class="mobile-menu-button" id="mobileMenuButton" type="button" aria-label="메뉴 열기" aria-expanded="false">☰</button>
+        <div class="topbar-title">
           <p class="eyebrow">고객 차트 / 두피 진단</p>
-          <h1 id="pageTitle">두피 진단</h1>
+          <h1 id="pageTitle">두피진단 VER.4.1</h1>
         </div>
-        <div class="patient-chip" aria-label="현재 환자 정보">
+        <div class="patient-chip" aria-label="현재 진단 대상">
           <span class="patient-avatar" aria-hidden="true">데</span>
-          <span><b>데모 환자</b><small>D-2026-001 · 합성 데이터</small></span>
+          <span><b>데모 환자</b><small>D-2026-041 · 합성 데이터</small></span>
         </div>
       </header>
 
       <section class="view is-visible" id="homeView" aria-labelledby="homeHeading">
         <div class="hero-panel">
           <div>
-            <span class="prototype-badge">VER.2.1 LOCAL PROTOTYPE</span>
-            <h2 id="homeHeading">사진에서 상담까지,<br>한 화면에서 연결합니다.</h2>
-            <p>최대 6장의 두피 사진을 등록하고 5개 환자 단계, 세부 상태, 의료진 확정, 상담 인계까지 확인합니다.</p>
-            <button class="primary-button large" id="heroStartButton" type="button">
-              두피 진단 시작 <span aria-hidden="true">→</span>
-            </button>
+            <span class="version-badge">VER.4.1 LOCAL PROTOTYPE</span>
+            <h2 id="homeHeading">심각도 근거부터<br>상담 가이드까지.</h2>
+            <p>사진 등록, 품질 확인, 자동 단계 판정, 치료 계획과 상담 인계를 한 흐름으로 연결합니다.</p>
+            <div class="hero-actions">
+              <button class="primary-button large is-inverse" id="heroStartButton" type="button">두피 진단 시작 <span aria-hidden="true">→</span></button>
+              <span>실제 AI·CRM 서버와 연결되지 않은 검증용 앱</span>
+            </div>
           </div>
-          <div class="hero-visual" aria-label="진단 프로세스 요약">
-            <div class="flow-node"><b>01</b><span>사진 등록</span></div>
-            <div class="flow-line" aria-hidden="true"></div>
-            <div class="flow-node"><b>02</b><span>단계·세부 상태 제안</span></div>
-            <div class="flow-line" aria-hidden="true"></div>
-            <div class="flow-node"><b>03</b><span>의료진 확정</span></div>
+          <div class="hero-flow" aria-label="진단 프로세스">
+            <div class="flow-step"><b>01</b><span>사진 등록<small>최대 6장</small></span></div>
+            <i aria-hidden="true"></i>
+            <div class="flow-step"><b>02</b><span>단계 제안<small>합성 데모</small></span></div>
+            <i aria-hidden="true"></i>
+            <div class="flow-step"><b>03</b><span>자동 결과<small>승인 기준표 적용</small></span></div>
+            <i aria-hidden="true"></i>
+            <div class="flow-step"><b>04</b><span>상담 인계<small>승인 문구 사용</small></span></div>
           </div>
         </div>
 
-        <div class="overview-grid">
-          <article><span class="overview-icon" aria-hidden="true">▧</span><b>사진 최대 6장</b><p>등록 사진은 브라우저 메모리에서만 사용합니다.</p></article>
-          <article><span class="overview-icon" aria-hidden="true">5</span><b>환자 결과 5단계</b><p>2·2+·3·3+·4 중 하나로 제안합니다.</p></article>
-          <article><span class="overview-icon" aria-hidden="true">3</span><b>세부 상태 3종</b><p>민감성·각질·유분을 사진과 함께 설명합니다.</p></article>
+        <div class="feature-grid">
+          <article><span aria-hidden="true">01</span><b>점수 대신 단계</b><p>미검증 종합 점수 없이 0~4단계와 관찰 근거를 우선합니다.</p></article>
+          <article><span aria-hidden="true">02</span><b>근거 분리</b><p>확정 판정과 연구 중인 모발 지표를 같은 의미로 섞지 않습니다.</p></article>
+          <article><span aria-hidden="true">03</span><b>정상 건 자동 결과</b><p>필수 확정 버튼 없이 결과를 만들고 예외 건만 의료진 검토로 전환합니다.</p></article>
         </div>
       </section>
 
@@ -78,23 +81,46 @@
           <div>
             <button class="text-button" id="backHomeButton" type="button">← 고객 차트로</button>
             <p class="eyebrow">STEP 1 · 사진 등록</p>
-            <h2 id="uploadHeading">환자 두피 사진을 등록해주세요</h2>
-            <p>여러 각도에서 촬영한 사진을 최대 6장까지 등록할 수 있습니다.</p>
+            <h2 id="uploadHeading">두피 사진을 등록해주세요</h2>
+            <p>같은 조명과 배율로 촬영한 사진을 최대 6장까지 등록할 수 있습니다.</p>
           </div>
           <div class="upload-count"><b id="uploadCount">0</b><span>/ 6장</span></div>
         </div>
 
         <div class="privacy-banner" role="note">
           <span aria-hidden="true">🔒</span>
-          <div><b>로컬 프로토타입</b><p>사진은 서버나 브라우저 저장소에 보관하지 않습니다. 실제 환자 사진 대신 합성·가명 이미지를 사용하세요.</p></div>
-          <button class="secondary-button sample-button" id="loadSampleButton" type="button">합성 샘플 3장 불러오기</button>
+          <div><b>사진은 이 브라우저의 임시 메모리에서만 사용됩니다.</b><p>서버 전송·브라우저 저장을 하지 않으며 새로고침하면 사라집니다. 실제 환자 사진 대신 가명·합성 이미지를 사용하세요.</p></div>
+        </div>
+
+        <div class="capture-meta-grid" aria-label="촬영 메타데이터">
+          <label>촬영 부위
+            <select id="captureSite">
+              <option value="frontal">전두부</option>
+              <option value="vertex" selected>정수리</option>
+              <option value="temporal">측두부</option>
+              <option value="occipital">후두부</option>
+            </select>
+          </label>
+          <label>촬영 장비
+            <select id="captureDevice">
+              <option value="demo-device" selected>데모 두피 촬영기</option>
+              <option value="external">외부 촬영기 · 검토 필요</option>
+            </select>
+          </label>
+          <label>배율
+            <select id="captureMagnification">
+              <option value="x50">×50</option>
+              <option value="x100" selected>×100</option>
+              <option value="unknown">확인 불가</option>
+            </select>
+          </label>
         </div>
 
         <div class="upload-zone" id="uploadZone">
           <input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>
           <button class="upload-picker" id="photoPickerButton" type="button">
             <span class="upload-icon" aria-hidden="true">↑</span>
-            <b>사진을 선택하거나 이곳에 끌어놓으세요</b>
+            <b>사진 선택 또는 끌어놓기</b>
             <small>JPG · PNG · WEBP / 장당 10MB 이하</small>
           </button>
         </div>
@@ -106,165 +132,191 @@
           <button class="secondary-button" id="cancelUploadButton" type="button">취소</button>
           <div>
             <span class="helper-text" id="uploadHelper">사진을 1장 이상 등록하면 분석을 시작할 수 있습니다.</span>
-            <button class="primary-button" id="analyzeButton" type="button" disabled data-testid="analyze">데모 분석 시작</button>
+            <button class="primary-button" id="analyzeButton" type="button" disabled data-testid="analyze">사진 등록 완료</button>
           </div>
         </div>
       </section>
 
-      <section class="view analysis-view" id="analysisView" aria-labelledby="analysisHeading" aria-live="polite">
+      <section class="view analysis-view" id="analysisView" aria-labelledby="analysisHeading">
         <div class="analysis-loader" aria-hidden="true"><span></span><span></span><span></span></div>
         <p class="eyebrow">STEP 2 · 데모 분석</p>
-        <h2 id="analysisHeading">진단 결과 화면을 준비하고 있습니다</h2>
-        <p>실제 의료 AI가 아닌 로컬 데모 규칙으로 단계와 세부 상태를 생성합니다.</p>
+        <h2 id="analysisHeading">자동 판정 결과를 준비하고 있습니다</h2>
+        <p>현재 버전은 실제 의료 AI 대신 고정된 합성 결과로 자동 결과 흐름을 검증합니다.</p>
         <div class="analysis-steps" aria-label="처리 진행 상태">
-          <span data-analysis-step="0" class="is-active">사진 불러오기</span>
-          <span data-analysis-step="1">단계·세부 상태 생성</span>
-          <span data-analysis-step="2">결과 화면 구성</span>
+          <span class="is-done">사진 불러오기</span>
+          <span class="is-active">관찰값 구성</span>
+          <span>승인 기준표 매핑</span>
+        </div>
+      </section>
+
+      <section class="view review-view" id="reviewView" aria-labelledby="reviewHeading">
+        <div class="result-topline">
+          <div>
+            <button class="text-button" id="backUploadButton" type="button">← 사진 다시 선택</button>
+            <p class="eyebrow">예외 흐름 · 의료진 검토</p>
+            <h2 id="reviewHeading">예외 건의 단계와 관찰값을 검토해주세요</h2>
+            <p>낮은 신뢰도·단계와 소견 불일치 건에만 사용하는 화면입니다.</p>
+          </div>
+          <span class="status-badge is-pending">예외 검토 모드</span>
+        </div>
+
+        <div class="demo-warning" role="note"><b>실제 판독 결과가 아닙니다.</b> 이미지 내용은 분석하지 않으며, 아래 값은 인터페이스 검증을 위한 합성 데이터입니다.</div>
+
+        <div class="review-layout">
+          <section class="review-photo-card">
+            <div class="card-heading"><div><p class="eyebrow">대표 사진</p><h3>진단 대상 이미지</h3></div><span id="reviewPhotoCount">0장</span></div>
+            <div class="review-photo" id="reviewPhoto"></div>
+            <div class="thumbnail-strip" id="reviewThumbnails"></div>
+          </section>
+
+          <form class="review-form" id="reviewForm">
+            <div class="form-heading"><p class="eyebrow">EXCEPTION REVIEW</p><h3>예외 결과 수정</h3><p>자동 판정이 적절하지 않은 경우에만 수정 사유를 기록하세요.</p></div>
+            <label>최종 단계
+              <select id="stageSelect">
+                <option value="0">0단계 · 건강 유지</option>
+                <option value="1">1단계 · 예방 관리</option>
+                <option value="2" selected>2단계 · 치료 필요</option>
+                <option value="3">3단계 · 적극 치료</option>
+                <option value="4">4단계 · 집중 치료</option>
+              </select>
+            </label>
+            <div class="axis-review-grid">
+              <label>붉은기
+                <select id="rednessInput">
+                  <option value="0">미관찰</option><option value="1">경도</option><option value="2" selected>중등도</option><option value="3">고도</option>
+                </select>
+              </label>
+              <label>각질
+                <select id="scaleInput">
+                  <option value="0">미관찰</option><option value="1">경도</option><option value="2" selected>중등도</option><option value="3">고도</option>
+                </select>
+              </label>
+              <label>유분
+                <select id="sebumInput">
+                  <option value="0">미관찰</option><option value="1" selected>경도</option><option value="2">중등도</option><option value="3">고도</option>
+                </select>
+              </label>
+            </div>
+            <label>의료진 메모
+              <textarea id="reviewNote" rows="4" maxlength="300" placeholder="상담실장에게 전달할 메모를 입력하세요."></textarea>
+            </label>
+            <div class="form-policy"><b>예외 검토 원칙</b><span>수정 전후 값과 사유를 기록하며, 미검증 모발 지표는 결과에 포함하지 않습니다.</span></div>
+            <button class="confirm-button" type="submit" data-testid="confirm-review">예외 검토 결과 반영</button>
+          </form>
         </div>
       </section>
 
       <section class="view result-view" id="resultView" aria-labelledby="resultHeading">
         <div class="result-topline">
           <div>
-            <button class="text-button" id="backUploadButton" type="button">← 사진 다시 선택</button>
-            <p class="eyebrow">STEP 3 · 진단 결과</p>
-            <h2 id="resultHeading">두피 진단 결과</h2>
+            <button class="text-button" id="editReviewButton" type="button">예외 검토 열기</button>
+            <p class="eyebrow">STEP 3 · 자동 결과</p>
+            <h2 id="resultHeading">두피진단 VER.4.1</h2>
           </div>
           <div class="result-actions">
-            <button class="secondary-button" id="printButton" type="button">결과 인쇄</button>
-            <button class="primary-button" id="handoffButton" type="button" disabled>상담 인계</button>
+            <span class="status-badge is-confirmed" id="reviewStatus">자동 판정 결과</span>
+            <button class="secondary-button" id="printButton" type="button">인쇄</button>
+            <button class="primary-button" id="handoffButton" type="button" data-testid="handoff">상담 인계</button>
           </div>
         </div>
 
-        <div class="demo-warning" role="note"><b>데모 판정입니다.</b> 이미지 내용을 실제로 판독하지 않습니다. 단계·수치·치료안은 의료진 검토 후 상담에 사용하세요.</div>
+        <div class="result-meta-bar">
+          <div><small>진단 대상</small><b>데모 환자 · D-2026-041</b></div>
+          <div><small>분석 단계</small><b id="resultMetaStage">2단계 · 치료 필요</b></div>
+          <div><small>기준표</small><b>VER.4.1 · 검증용</b></div>
+          <div><small>진단 상태</small><b id="handoffStatusText">자동 판정 · 인계 대기</b></div>
+        </div>
 
-        <nav class="section-nav" aria-label="진단 결과 섹션">
-          <a href="#current-result">현재 결과</a>
-          <a href="#scalp-metrics">세부 상태</a>
-          <a href="#progression">악화 흐름</a>
-          <a href="#healthy-comparison">건강 비교</a>
-          <a href="#treatment-plan">권고 치료</a>
-          <a href="#reference-cases">유사 사례</a>
+        <nav class="result-nav" aria-label="진단 결과 화면">
+          <button type="button" data-result-tab="overview" aria-selected="true"><span>01</span>진단 요약</button>
+          <button type="button" data-result-tab="evidence" aria-selected="false"><span>02</span>화면 3 · 심각성</button>
+          <button type="button" data-result-tab="progression" aria-selected="false"><span>03</span>화면 4 · 진행</button>
+          <button type="button" data-result-tab="treatment" aria-selected="false"><span>04</span>화면 5 · 치료</button>
+          <button type="button" data-result-tab="guide" aria-selected="false"><span>05</span>상담 가이드</button>
         </nav>
 
-        <section class="result-section" id="current-result">
-          <div class="section-kicker">A · 현재 결과</div>
-          <div class="diagnosis-grid">
-            <div class="patient-gallery-card">
-              <div class="card-heading"><div><p class="eyebrow">환자 사진</p><h3>대표 촬영 이미지</h3></div><span id="galleryPhotoCount">0장</span></div>
-              <div class="patient-gallery" id="patientGallery"></div>
-              <div class="thumbnail-strip" id="thumbnailStrip"></div>
+        <div class="result-content">
+          <section class="result-tab-panel is-active" data-result-panel="overview">
+            <div class="tab-heading"><div><p class="eyebrow">01 · DIAGNOSIS OVERVIEW</p><h3 id="overviewTitle">두피 염증 2단계 · 치료가 필요한 구간</h3><p>심각도와 사진 근거를 먼저 설명하고, 모발 변화는 검증된 경우에만 별도 관찰합니다.</p></div><span class="stage-pill is-amber" id="overviewStagePill">현재 2단계</span></div>
+            <div class="overview-result-grid">
+              <article class="result-photo-panel"><div class="result-photo" id="resultPhoto"></div><div class="thumbnail-strip" id="resultThumbnails"></div></article>
+              <article class="stage-summary-card">
+                <div class="stage-summary-top"><div><span class="stage-pill is-amber" id="stageMeaningPill">염증·장벽 치료 필요</span><div class="stage-number"><strong id="overviewStageNumber">2</strong><span>단계</span></div></div><span class="stage-pill is-gray">점수 미사용</span></div>
+                <p id="overviewSummary">붉은기와 각질이 여러 부위에서 관찰되어 2단계로 확정됐습니다.</p>
+                <div class="stage-rail" id="stageRail" aria-label="0~4단계 중 현재 단계"></div>
+                <div class="axis-grid">
+                  <div class="axis"><div><b>붉은기</b><span id="rednessLabel">중등도 관찰</span></div><div class="meter"><i id="rednessMeter"></i></div></div>
+                  <div class="axis"><div><b>각질</b><span id="scaleLabel">중등도 관찰</span></div><div class="meter"><i id="scaleMeter"></i></div></div>
+                  <div class="axis"><div><b>유분</b><span id="sebumLabel">경도 관찰</span></div><div class="meter"><i id="sebumMeter"></i></div></div>
+                </div>
+                <div class="info-note"><b>모발 관찰은 별도 연구 트랙</b><span>굵기·모근당 모발 수는 측정 가능성과 기준이 승인된 경우에만 표시합니다.</span></div>
+              </article>
             </div>
+            <div class="panel-footer"><span>승인 기준표를 적용한 자동 결과이며 실제 치료 결정은 진료를 통해 이루어집니다.</span><button class="next-tab-button" type="button" data-next-tab="evidence">판정 근거 보기 →</button></div>
+          </section>
 
-            <div class="diagnosis-summary-card">
-              <div class="status-row"><span class="status-badge is-pending" id="reviewStatus">데모 제안 · 미확정</span><span id="analysisDate">-</span></div>
-              <div class="stage-hero"><small>현재 제안 단계</small><strong id="displayStage">3+단계</strong><span id="displayStageName">Moderate+</span></div>
-              <p class="stage-summary" id="stageSummary"></p>
-              <ul class="symptom-list" id="symptomList"></ul>
-              <div class="model-note"><span>분석 버전</span><b>LOCAL-DEMO 2.1</b></div>
+          <section class="result-tab-panel" data-result-panel="evidence">
+            <div class="tab-heading"><div><p class="eyebrow">02 · SEVERITY EVIDENCE</p><h3>심각성 근거를 1차와 2차로 분리합니다</h3><p>현재 판정에 사용된 근거와 연구 중인 모발 지표를 같은 의미로 섞지 않습니다.</p></div><span class="stage-pill">기준표 v4.1 · 검증용</span></div>
+            <div class="evidence-grid">
+              <article class="result-photo-panel"><div class="result-photo is-annotated" id="evidencePhoto"><span class="photo-pin pin-one">1</span><span class="photo-pin pin-two">2</span><span class="photo-pin pin-three">3</span></div><p class="panel-caption">사진의 표시 부위와 실제 관찰 소견을 연결합니다.</p></article>
+              <article class="evidence-card">
+                <h4>1차 분류 · 두피염 심각도</h4>
+                <div class="finding"><b>1</b><div><strong>붉은기</strong><p id="rednessFinding">여러 부위에서 중등도 홍반 관찰</p></div><span class="stage-pill is-amber" id="rednessFindingPill">관찰됨</span></div>
+                <div class="finding"><b>2</b><div><strong>각질</strong><p id="scaleFinding">모공 주변 각질이 연속적으로 분포</p></div><span class="stage-pill is-amber" id="scaleFindingPill">관찰됨</span></div>
+                <div class="finding"><b>3</b><div><strong>유분</strong><p id="sebumFinding">일부 부위에서 경미한 번들거림</p></div><span class="stage-pill" id="sebumFindingPill">경도</span></div>
+                <h4 class="secondary-heading">2차 분류 · 범위와 모발 관찰</h4>
+                <div class="research-fields"><div><b>병변 범위</b><small>사진 기반 산정 기준 승인 필요</small></div><div><b>모발 굵기</b><small>측정기기·정상 기준 미확정</small></div><div><b>모근당 모발 수</b><small>촬영·판독 기준 미확정</small></div></div>
+                <div class="research-note"><b>‘연모화 관찰’ 연구 트랙</b><p>용어, 단계별 수치와 인과관계가 검증되기 전에는 진단 확정값이나 판매 근거로 사용하지 않습니다.</p></div>
+              </article>
             </div>
-          </div>
+            <div class="panel-footer"><span>실제 측정값과 승인 기준이 모두 있을 때만 모발 지표를 노출합니다.</span><button class="next-tab-button" type="button" data-next-tab="progression">진행 경로 보기 →</button></div>
+          </section>
 
-          <div class="review-panel">
-            <div><p class="eyebrow">의료진 검토</p><h3>환자 결과 단계를 확인해주세요</h3><p>확정 전 결과는 최종 진단으로 상담 인계할 수 없습니다.</p></div>
-            <form id="reviewForm" novalidate>
-              <label>최종 단계
-                <select id="stageSelect">
-                  <option value="2">2단계 · Mild</option>
-                  <option value="2+">2+단계 · Mild+</option>
-                  <option value="3">3단계 · Moderate</option>
-                  <option value="3+" selected>3+단계 · Moderate+</option>
-                  <option value="4">4단계 · Severe</option>
-                </select>
-              </label>
-              <label class="change-reason">수정 사유<textarea id="changeReason" rows="3" maxlength="200" placeholder="제안 단계와 다를 때 입력해주세요."></textarea></label>
-              <label class="review-note">의료진 메모<textarea id="reviewNote" rows="3" maxlength="300" placeholder="상담실장에게 전달할 메모를 입력하세요."></textarea></label>
-              <p class="review-error" id="reviewError" role="alert" hidden></p>
-              <button class="confirm-button" type="submit" data-testid="confirm-review">의료진 결과 확정</button>
-            </form>
-          </div>
+          <section class="result-tab-panel" data-result-panel="progression">
+            <div class="tab-heading"><div><p class="eyebrow">03 · ADAPTIVE PROGRESSION</p><h3>현재 단계에 따라 경로를 다르게 보여줍니다</h3><p>다음 단계 가능성과 장기 위험 참고를 구분하며, 4단계까지의 기간은 표시하지 않습니다.</p></div><span class="stage-pill is-gray">개인차 있음</span></div>
+            <div class="progression-path" id="progressionPath"></div>
+            <div class="period-grid"><article><small>다음 단계까지 평균 예상 범위</small><b>의료진 기준 승인 후 표시</b></article><article><small>4단계까지 예상 기간</small><b>표시하지 않음</b></article></div>
+            <div class="research-note wide"><b>모발 변화 설명</b><p>모발이 가늘어지거나 탈락할 수 있다는 문구는 연구·의료진 승인을 거쳐 가능성 수준으로만 사용합니다. 현재 굵기만으로 미래 악화를 단정하지 않습니다.</p></div>
+            <div class="panel-footer"><span>진행 속도와 양상에는 개인차가 있습니다.</span><button class="next-tab-button" type="button" data-next-tab="treatment">치료 계획 보기 →</button></div>
+          </section>
 
-          <div class="stage-reference">
-            <div class="card-heading"><div><p class="eyebrow">SCALP STAGE REFERENCE</p><h3>0~4+ 전체 단계 기준</h3></div><span>환자 결과는 2~4단계만 허용</span></div>
-            <div class="stage-reference-grid" id="stageReferenceGrid"></div>
-          </div>
-        </section>
-
-        <section class="result-section" id="scalp-metrics">
-          <div class="section-kicker">B · 세부 상태</div>
-          <div class="section-title-row"><div><h3>민감성·각질·유분 상태</h3><p>낮은 수치일수록 심각한 상태를 의미합니다.</p></div><span class="demo-only-badge">DEMO SCORE 1–30</span></div>
-          <div class="metric-grid" id="metricGrid"></div>
-          <div class="metric-footnote">세부 점수는 로컬 목업용 데모 값입니다. 환자 종합 점수는 표시하지 않습니다.</div>
-        </section>
-
-        <section class="result-section" id="progression">
-          <div class="section-kicker">C · 악화 흐름</div>
-          <div class="section-title-row"><div><h3>치료하지 않을 경우의 단계 변화</h3><p>현재 상태와 다음 단계, 4+단계 예시를 비교합니다.</p></div><span class="rule-version">단계별 2–4개월 안내</span></div>
-          <div class="progression-grid" id="progressionGrid"></div>
-          <div class="progression-note"><b>안내</b><span>2–4개월은 기획상 상담 안내값이며 개인별 진행을 보장하지 않습니다. 환자 노출 전 의료진 검수가 필요합니다.</span></div>
-        </section>
-
-        <section class="result-section" id="healthy-comparison">
-          <div class="section-kicker">D · 건강 비교</div>
-          <div class="section-title-row"><div><h3>건강한 두피 VS 4+단계 두피</h3><p>모발 굵기와 모근당 모발 수를 예시 이미지로 비교합니다.</p></div><span class="medical-review-badge">의료진 검수 필요</span></div>
-          <div class="hair-comparison-grid">
-            <article class="hair-comparison-card healthy">
-              <div class="comparison-image"><img src="assets/stage-0.jpg" alt="건강한 두피 예시 이미지"></div>
-              <span class="comparison-label">HEALTHY · 0단계</span><h4>건강한 두피 환경</h4>
-              <div class="hair-stats"><div><small>모발 굵기</small><b>0.5mm</b></div><div><small>모근당 모발</small><b>3개</b></div></div>
-              <p>과도한 붉음과 두꺼운 각질이 없고 모발이 비교적 굵고 고르게 관찰되는 예시입니다.</p>
-            </article>
-            <article class="hair-comparison-card severe">
-              <div class="comparison-image"><img src="assets/stage-4.jpg" alt="4+단계 두피 예시 이미지"></div>
-              <span class="comparison-label">SEVERE+ · 4+단계 예시</span><h4>악화된 두피 환경</h4>
-              <div class="hair-stats"><div><small>모발 굵기</small><b>0.1mm</b></div><div><small>모근당 모발</small><b>1개</b></div></div>
-              <p>붉음·두꺼운 각질·유분성 부착물이 모공 주변에 쌓이고 모발이 가늘고 성기게 관찰되는 예시입니다.</p>
-            </article>
-          </div>
-          <div class="medical-caveat"><b>예시 수치</b><span>0.5mm/0.1mm와 모근당 3개/1개는 의료진 승인 전 확정 수치로 사용하지 않습니다.</span></div>
-        </section>
-
-        <section class="result-section" id="treatment-plan">
-          <div class="section-kicker">E · 권고 치료</div>
-          <div class="section-title-row"><div><h3>현재 단계의 권고 치료안</h3><p>AI 생성 문구가 아닌 단계별 규칙표의 데모 값입니다.</p></div><span class="rule-version" id="treatmentStatus">예상 치료안 · 확정 전</span></div>
-          <div class="treatment-layout">
-            <article class="treatment-patient-card">
-              <div class="treatment-patient-image" id="treatmentPatientImage"></div>
-              <span>현재 환자 단계</span><strong id="treatmentStage">3+단계</strong><p id="treatmentPatientSummary"></p>
-            </article>
-            <div class="treatment-plan-stack">
-              <article class="treatment-plan-card required"><span class="plan-label">기본·필수 치료</span><h4 id="requiredTreatmentTitle">프리컨디셔닝 + 아르케</h4><strong id="requiredTreatmentCount">25–30회</strong><p>현재 단계 기준의 필수 권고 회차입니다.</p></article>
-              <article class="treatment-plan-card enhanced"><span class="plan-label">강화 치료 · 권고</span><h4 id="enhancedTreatmentTitle">보톡스 + 엑소좀</h4><p>환자 상태와 적응 여부를 의료진이 확인한 뒤 확정합니다.</p></article>
+          <section class="result-tab-panel" data-result-panel="treatment">
+            <div class="tab-heading"><div><p class="eyebrow">04 · TREATMENT PLAN</p><h3>치료기간과 완료 기준을 함께 설계합니다</h3><p>목표는 일률적인 0단계가 아니라 의료진이 승인한 치료 완료·홈케어 전환 기준 충족입니다.</p></div><span class="stage-pill is-amber" id="treatmentStagePill">2단계 · 치료 필요</span></div>
+            <div class="treatment-layout">
+              <article class="treatment-card">
+                <h4>예상 치료기간</h4>
+                <div class="period-callout"><small id="treatmentGoal">홈케어 전환 기준 충족까지</small><b>의료진 승인 후 표시</b></div>
+                <div id="protocolList" class="protocol-list"></div>
+              </article>
+              <article class="treatment-card">
+                <h4>치료 완료 기준 · 초안</h4>
+                <span class="stage-pill is-gray">원장님 확정 필요</span>
+                <div class="completion-list"><div><i>✓</i><span>동일 조건 촬영에서 붉은기·유분·각질이 승인 기준 이하</span></div><div><i>✓</i><span>집중 치료가 필요하지 않은 상태</span></div><div><i>✓</i><span>홈케어와 정기 확인으로 관리 가능한 상태</span></div><div><i>?</i><span>모발 지표는 측정 가능성 검증 후 추가</span></div></div>
+                <div class="soft-card"><b>기간 노출 규칙</b><p>승인 완료값만 표시하며 초안·조사 중 값은 “의료진 상담 후 결정”으로 대체합니다.</p></div>
+                <div class="danger-card"><b>판매 논리 차단</b><p>모발 우려를 추가 시술 판매 근거로 사용하지 않고 적응증과 승인 기준이 있을 때만 선택지로 제시합니다.</p></div>
+              </article>
             </div>
-          </div>
-        </section>
+            <div class="panel-footer"><span>치료기간과 완료 기준은 서로 다른 승인 상태로 관리합니다.</span><button class="next-tab-button" type="button" data-next-tab="guide">상담 가이드 보기 →</button></div>
+          </section>
 
-        <section class="result-section" id="reference-cases">
-          <div class="section-kicker">F · 유사 사례</div>
-          <div class="section-title-row"><div><h3>유사 치료 사례 A/B</h3><p>실제 운영 전 동의받은 동일 환자 전후 사례로 교체해야 합니다.</p></div><span class="demo-only-badge">LAYOUT DEMO</span></div>
-          <div class="case-grid">
-            <article class="case-card">
-              <div class="case-label"><span>CASE A</span><b>표준 관리 경로 예시</b></div>
-              <div class="case-images"><figure><img id="caseAStartImage" src="assets/stage-3.jpg" alt="현재 단계 참고 이미지"><figcaption id="caseAStartLabel">시작 참고</figcaption></figure><span aria-hidden="true">→</span><figure><img src="assets/stage-1.jpg" alt="개선 목표 참고 이미지"><figcaption>목표 참고</figcaption></figure></div>
-              <dl><div><dt>치료 구성</dt><dd>실제 사례 입력 필요</dd></div><div><dt>기간·횟수</dt><dd>실제 사례 입력 필요</dd></div></dl>
-            </article>
-            <article class="case-card">
-              <div class="case-label"><span>CASE B</span><b>복합 관리 경로 예시</b></div>
-              <div class="case-images"><figure><img id="caseBStartImage" src="assets/stage-4.jpg" alt="인접 단계 참고 이미지"><figcaption id="caseBStartLabel">인접 단계 참고</figcaption></figure><span aria-hidden="true">→</span><figure><img src="assets/stage-2.jpg" alt="개선 목표 참고 이미지"><figcaption>목표 참고</figcaption></figure></div>
-              <dl><div><dt>치료 구성</dt><dd>실제 사례 입력 필요</dd></div><div><dt>기간·횟수</dt><dd>실제 사례 입력 필요</dd></div></dl>
-            </article>
-          </div>
-          <div class="case-warning"><b>주의</b> 위 사진은 단계 참고 이미지를 조합한 UI 시뮬레이션이며 동일 환자의 치료 전후 결과가 아닙니다.</div>
-        </section>
+          <section class="result-tab-panel" data-result-panel="guide">
+            <div class="tab-heading"><div><p class="eyebrow">05 · COUNSELOR GUIDE</p><h3>모발 변화 질문은 승인 문구로만 답합니다</h3><p>환자 안내와 내부 상담 가이드를 분리하고 미검증 수치·공포 기반 설명을 차단합니다.</p></div><span class="stage-pill">내부 권한</span></div>
+            <div class="guide-layout">
+              <article class="guide-card"><h4>환자 질문과 권장 답변</h4><details open><summary>모발이 얇아지고 있나요?</summary><p>현재 자료만으로 단정하지 않습니다. 측정 가능한 기기와 승인 기준이 확보되면 동일 조건에서 확인합니다.</p></details><details><summary>치료하지 않으면 언제 4단계가 되나요?</summary><p>4단계까지의 기간은 표시하지 않습니다. 다음 단계 예상 범위도 의료진 승인값이 있을 때만 안내합니다.</p></details><details><summary>추가 시술을 받으면 모발이 굵어지나요?</summary><p>효과를 보장하지 않습니다. 적응증과 의료진 판단에 따라 선택지를 설명합니다.</p></details></article>
+              <article class="guide-card"><h4>사용 금지 문구</h4><div class="blocked-copy"><div><i>×</i><span>“현재 굵어도 곧 얇아집니다.”</span></div><div><i>×</i><span>“염증이 있으면 모발이 반드시 탈락합니다.”</span></div><div><i>×</i><span>“이 수치 아래면 연모기입니다.”</span></div><div><i>×</i><span>“추가 시술을 받으면 모발이 굵어집니다.”</span></div></div><div class="soft-card"><b>의료진 인계 조건</b><p>모발 굵기·탈락·모근당 모발 수, 효과 보장, 치료 완료 여부, 승인 기준 밖의 치료 질문은 의료진 상담으로 전환합니다.</p></div><button class="primary-button" id="doctorEscalationButton" type="button">의료진 상담 연결 →</button></article>
+            </div>
+            <div class="medical-note"><b>의료진 전달 메모</b><p id="resultReviewNote">등록된 메모가 없습니다.</p></div>
+            <div class="audit-card"><div><b>로컬 작업 로그</b><span>새로고침하면 삭제됩니다.</span></div><ol id="auditLogList"></ol></div>
+            <div class="panel-footer"><span>상담 문구 버전과 사용 이력을 운영 서버에서 기록해야 합니다.</span><button class="next-tab-button" type="button" data-next-tab="overview">처음으로 돌아가기</button></div>
+          </section>
+        </div>
 
-        <footer class="result-footer">
-          <div><b>르샤인 두피센터 CRM</b><span>의료진 확정 결과를 바탕으로 상담을 진행합니다.</span></div>
-          <button class="primary-button" id="footerHandoffButton" type="button" disabled>상담실장에게 인계</button>
-        </footer>
+        <footer class="result-footer"><div><b>르샤인 두피센터 CRM</b><span>승인 기준표를 적용한 자동 결과를 바탕으로 상담을 진행합니다.</span></div><button class="primary-button" id="footerHandoffButton" type="button">상담실장에게 인계</button></footer>
       </section>
     </main>
   </div>
 
+  <div class="sidebar-backdrop" id="sidebarBackdrop" hidden></div>
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
   <script src="app.js" defer></script>
 </body>
