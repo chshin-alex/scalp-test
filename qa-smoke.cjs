@@ -1,15 +1,16 @@
 const { chromium } = require("playwright");
+const path = require("path");
 
 const BASE_URL = process.env.QA_BASE_URL || "http://127.0.0.1:4173";
-const ALLOWED_STAGES = new Set(["2단계", "2+단계", "3단계", "3+단계", "4단계"]);
+const ALLOWED_STAGES = new Set(["0단계", "1단계", "1+단계", "2단계", "2+단계", "3단계", "3+단계", "4단계", "4+단계"]);
 
 async function completeDemo(page) {
   await page.getByTestId("start-diagnosis").click();
-  await page.locator("#loadSampleButton").click();
+  await page.locator("#photoInput").setInputFiles(path.join(__dirname, "assets", "stage-2-plus.jpg"));
   const count = await page.locator("#uploadCount").textContent();
-  if (count !== "3") throw new Error(`Expected 3 sample photos, got ${count}`);
+  if (count !== "1") throw new Error(`Expected 1 uploaded photo, got ${count}`);
   await page.getByTestId("analyze").click();
-  await page.locator("#resultView.is-visible").waitFor({ timeout: 5000 });
+  await page.locator("#resultView.is-visible").waitFor({ timeout: 10000 });
 }
 
 (async () => {
@@ -34,14 +35,57 @@ async function completeDemo(page) {
 
   const stage = (await page.locator("#displayStage").textContent()).trim();
   if (!ALLOWED_STAGES.has(stage)) throw new Error(`Unexpected patient stage: ${stage}`);
+  if (stage !== "2+단계") throw new Error(`Expected the 2+ director reference to classify as 2+, got ${stage}`);
+
+  const modelInfo = await page.evaluate(() => ({
+    version: window.ScalpClassifier?.modelVersion,
+    count: window.ScalpClassifier?.referenceCount,
+    directorCount: window.ScalpClassifier?.directorReferenceCount
+  }));
+  if (modelInfo.directorCount !== 39) {
+    throw new Error(`Expected 39 director reference vectors, got ${modelInfo.directorCount}`);
+  }
+  if (modelInfo.count !== 40) throw new Error(`Expected 40 total reference vectors, got ${modelInfo.count}`);
+
+  const representativeStages = [
+    ["0", "stage-0.jpg"],
+    ["1", "stage-1.jpg"],
+    ["1+", "stage-1-plus.jpg"],
+    ["2", "stage-2.jpg"],
+    ["2+", "stage-2-plus.jpg"],
+    ["3", "stage-3.jpg"],
+    ["3+", "stage-3-plus.jpg"],
+    ["4", "stage-4.jpg"],
+    ["4+", "stage-4-plus.jpg"]
+  ];
+  const representativeResults = await page.evaluate(async (pairs) => {
+    const results = [];
+    for (const [expected, filename] of pairs) {
+      const analysis = await window.ScalpClassifier.analyzePhotos([{
+        id: filename,
+        url: `assets/${filename}`
+      }]);
+      results.push({ expected, actual: analysis.stage });
+    }
+    return results;
+  }, representativeStages);
+  const representativeMismatch = representativeResults.filter((result) => result.expected !== result.actual);
+  if (representativeMismatch.length) {
+    throw new Error(`Representative stage mismatch: ${JSON.stringify(representativeMismatch)}`);
+  }
 
   const options = await page.locator("#stageSelect option").evaluateAll((nodes) => nodes.map((node) => node.value));
-  if (JSON.stringify(options) !== JSON.stringify(["2", "2+", "3", "3+", "4"])) {
+  if (JSON.stringify(options) !== JSON.stringify(["0", "1", "1+", "2", "2+", "3", "3+", "4", "4+"])) {
     throw new Error(`Unexpected stage options: ${options.join(",")}`);
   }
 
   const referenceCount = await page.locator("#stageReferenceGrid .stage-tile").count();
   if (referenceCount !== 9) throw new Error(`Expected 9 reference stages, got ${referenceCount}`);
+  const stageSources = await page.locator("#stageReferenceGrid img").evaluateAll((nodes) => nodes.map((node) => new URL(node.src).pathname));
+  const severeSources = stageSources.slice(3);
+  if (new Set(severeSources).size !== 6) throw new Error(`Expected unique 2–4+ stage images, got ${severeSources.join(",")}`);
+  const unloadedStageImages = await page.locator("#stageReferenceGrid img").evaluateAll((nodes) => nodes.filter((node) => !node.complete || node.naturalWidth === 0).length);
+  if (unloadedStageImages) throw new Error(`Stage reference images failed to load: ${unloadedStageImages}`);
 
   const metricCount = await page.locator("#metricGrid .metric-card").count();
   if (metricCount !== 3) throw new Error(`Expected 3 metric cards, got ${metricCount}`);
@@ -52,6 +96,10 @@ async function completeDemo(page) {
 
   const progressionCount = await page.locator("[data-progression-card]").count();
   if (progressionCount !== 3) throw new Error(`Expected 3 progression cards, got ${progressionCount}`);
+  const progressionDurations = await page.locator(".progression-arrow small").allTextContents();
+  if (JSON.stringify(progressionDurations) !== JSON.stringify(["2–4개월", "8–16개월"])) {
+    throw new Error(`Unexpected 2+ stage progression durations: ${progressionDurations.join(",")}`);
+  }
 
   await page.locator("#stageSelect").selectOption("4");
   await page.getByTestId("confirm-review").click();

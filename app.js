@@ -5,7 +5,7 @@
   const MAX_BYTES = 10 * 1024 * 1024;
   const ACCEPTED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
   const ALL_STAGES = ["0", "1", "1+", "2", "2+", "3", "3+", "4", "4+"];
-  const PATIENT_STAGES = ["2", "2+", "3", "3+", "4"];
+  const PATIENT_STAGES = [...ALL_STAGES];
 
   const stageData = {
     "0": {
@@ -22,108 +22,112 @@
     },
     "1": {
       name: "Almost clear",
-      label: "거의 깨끗함",
+      label: "잔각질",
       image: "assets/stage-1.jpg",
-      summary: "대체로 맑지만 군데군데 옅은 분홍빛과 잔각질이 관찰되는 단계입니다.",
-      symptoms: ["군데군데 옅은 분홍빛", "가는 붉은 점이 살짝 보임", "모공 근처 잔가루 정도의 각질"],
+      summary: "홍반 없이 미세한 잔각질이 두피 표면에 고르게 보이는 단계입니다.",
+      symptoms: ["홍반 없음", "미세 각질이 고르게 깔림", "큰 비듬 덩어리 없음"],
       metrics: {
-        sensitivity: "대체로 맑지만 옅은 분홍빛과 가는 붉은 점이 일부 관찰됩니다.",
-        scale: "모공 근처에 잔가루 정도의 하얀 각질이 일부 보입니다.",
-        oil: "유분 변화가 뚜렷하지 않은 유지기 참고 상태입니다."
+        sensitivity: "두피 바탕색은 정상 범위이며 뚜렷한 붉은기가 관찰되지 않습니다.",
+        scale: "가는 잔각질이 넓게 보이지만 큰 각질판이나 비듬 덩어리는 없습니다.",
+        oil: "모공 주변에 소량 각질이 보이나 뚜렷한 유분성 부착물은 없습니다."
       }
     },
     "1+": {
       name: "Almost clear+",
-      label: "거의 깨끗함+",
-      image: "assets/stage-1.jpg",
-      summary: "1단계보다 붉음과 잔각질이 조금 더 보이지만 아직 유지기에 가까운 단계입니다.",
-      symptoms: ["옅은 분홍빛 범위 증가", "모공 입구 잔각질", "피로·환절기에 반복 가능"],
+      label: "모공 각질",
+      image: "assets/stage-1-plus.jpg",
+      summary: "홍반은 없지만 모공 둘레의 각질 조각과 얇은 각질판이 1단계보다 뚜렷한 단계입니다.",
+      symptoms: ["홍반 없음", "모공 둘레 각질 고리", "작은 비듬 조각·얇은 각질판"],
       metrics: {
-        sensitivity: "옅은 붉음이 1단계보다 조금 더 넓게 관찰되는 참고 상태입니다.",
-        scale: "일부 모공 입구에 하얀 잔각질이 모여 보일 수 있습니다.",
-        oil: "피로·환경 변화에 따라 번들거림이 나타날 수 있습니다."
+        sensitivity: "피부색은 정상 범위이며 붉은기는 아직 뚜렷하지 않습니다.",
+        scale: "모공마다 각질이 붙기 시작하고 떨어진 작은 비듬 조각이 여러 곳에 보입니다.",
+        oil: "모공 입구의 각질 고리가 선명해지지만 유분 변화는 제한적입니다."
       }
     },
     "2": {
       name: "Mild",
-      label: "경도",
+      label: "비듬+분홍",
       image: "assets/stage-2.jpg",
-      summary: "붉음과 얇은 각질이 보이기 시작해 관리를 시작하기 좋은 단계입니다.",
-      symptoms: ["분홍~옅은 붉은빛", "얇고 하얀 각질", "모공 입구의 하얀·노르스름한 각질"],
+      summary: "눈에 보이는 비듬·각질이 시야에 흩어지고 두피 바탕에 옅은 분홍빛이 동반되는 단계입니다.",
+      symptoms: ["옅은 분홍빛", "시야에 흩어진 흰 비듬·각질", "모공 주변 기름진 각질"],
       metrics: {
-        sensitivity: "분홍빛에서 옅은 붉은빛이 넓게 관찰되는 경도 상태입니다.",
-        scale: "얇고 하얀 각질이 흩어져 보이고 모공 입구에 각질이 끼기 시작합니다.",
-        oil: "기름막이 살짝 번들거릴 수 있는 초기 유분 변화가 관찰됩니다."
+        sensitivity: "두피 바탕이 정상색에서 옅은 분홍빛으로 변하기 시작합니다.",
+        scale: "큰 비듬 조각과 흰 각질이 시야 전체에 흩어져 보입니다.",
+        oil: "일부 모공을 기름진 각질이 덮는 초기 유분 변화가 관찰됩니다."
       }
     },
     "2+": {
       name: "Mild+",
-      label: "경도+",
-      image: "assets/stage-2.jpg",
-      summary: "2단계보다 붉음·각질·유분 변화가 뚜렷해지는 경도 상단 단계입니다.",
-      symptoms: ["옅은 붉은 테가 뚜렷해짐", "하얀·노르스름한 각질 증가", "가려움이 시작될 수 있음"],
+      label: "각질판",
+      image: "assets/stage-2-plus.jpg",
+      summary: "반투명 각질판이 넓어지고 분홍~붉은 바탕과 국소 홍반이 2단계보다 진해진 단계입니다.",
+      symptoms: ["넓어진 반투명 각질판", "분홍~붉은 바탕", "뚜렷한 붉은 반점과 주변 각질"],
       metrics: {
-        sensitivity: "모공 주변의 붉은 테와 옅은 붉음이 2단계보다 뚜렷합니다.",
-        scale: "하얀 각질과 노르스름한 각질이 여러 모공에서 보이기 시작합니다.",
-        oil: "두피 표면의 번들거림과 유분성 각질이 조금 더 뚜렷합니다."
+        sensitivity: "2단계보다 홍반이 진하고 붉은 반점의 범위가 넓게 관찰됩니다.",
+        scale: "여러 곳의 각질 조각이 이어져 반투명한 판 모양으로 보입니다.",
+        oil: "각질판 가장자리와 모공 주변의 유분성 부착물이 더 뚜렷합니다."
       }
     },
     "3": {
       name: "Moderate",
-      label: "중등도",
+      label: "홍반",
       image: "assets/stage-3.jpg",
-      summary: "붉음과 겹쳐 쌓인 각질이 명확해 집중 관리가 필요한 단계입니다.",
-      symptoms: ["한눈에 보이는 붉음", "겹쳐 쌓이는 각질", "노르스름하고 기름진 각질"],
+      summary: "시야 전반에 뚜렷한 홍반이 보이고 모공 주변 부종·혈관 확장과 기름진 각질이 동반되는 단계입니다.",
+      symptoms: ["시야 전반의 뚜렷한 홍반", "모공 주변 부종·혈관 확장", "붉은 바탕 위 기름진 각질"],
       metrics: {
-        sensitivity: "붉은기가 뚜렷하고 가는 혈관이 나뭇가지처럼 보일 수 있습니다.",
-        scale: "각질이 겹쳐 쌓이고 모공 주변을 테처럼 둘러싸기 시작합니다.",
-        oil: "노르스름하고 기름진 각질이 모공 입구를 덮는 중등도 상태입니다."
+        sensitivity: "붉은 바탕이 넓고 모공 주변이 부어 보이거나 혈관이 확장되어 보일 수 있습니다.",
+        scale: "붉은 바탕 위에 각질판과 미세 각질이 함께 관찰됩니다.",
+        oil: "노르스름하고 기름진 각질이 모공 입구를 덮는 상태입니다."
       }
     },
     "3+": {
       name: "Moderate+",
-      label: "중등도+",
-      image: "assets/stage-3.jpg",
-      summary: "중등도 증상이 넓고 뚜렷하며 화끈거림·진물 가능성을 함께 확인해야 하는 단계입니다.",
-      symptoms: ["넓고 뚜렷한 붉음", "머리카락 사이로 보이는 각질", "화끈거림·진물 가능성"],
+      label: "홍반 확대",
+      image: "assets/stage-3-plus.jpg",
+      summary: "진한 홍반이 넓게 퍼지고 두꺼운 각질판이 들뜨거나 시야 대부분을 덮는 단계입니다.",
+      symptoms: ["넓고 진한 홍반", "시야 대부분의 각질", "모공마다 붙은 각질·들뜬 각질판"],
       metrics: {
-        sensitivity: "넓은 붉음과 모공 주변 붉은 테가 3단계보다 강하게 관찰됩니다.",
-        scale: "겹친 각질이 머리카락 사이에서도 눈에 띄는 상태입니다.",
-        oil: "기름진 각질과 번들거림이 넓게 보여 집중 관리가 필요합니다."
+        sensitivity: "3단계보다 진한 홍반이 넓게 퍼져 모공 사이 바탕 전체가 붉게 보입니다.",
+        scale: "두꺼운 각질판이 들뜨고 흰 각질이 시야 대부분을 덮습니다.",
+        oil: "기름진 각질이 여러 모공에 붙고 넓은 범위에서 관찰됩니다."
       }
     },
     "4": {
       name: "Severe",
-      label: "중증",
+      label: "두꺼운 각질",
       image: "assets/stage-4.jpg",
-      summary: "강한 붉음과 두껍고 거친 각질이 넓게 보이며 우선 진료가 필요한 단계입니다.",
-      symptoms: ["진하고 강한 붉은빛", "두껍고 거친 판 모양 각질", "각질로 가려진 모공 입구"],
+      summary: "진한 홍반 위에 두꺼운 각질판과 노란 딱지가 쌓이고 일부 점상 출혈이 동반될 수 있는 단계입니다.",
+      symptoms: ["진한 홍반", "두꺼운 판 모양 각질", "노란 딱지·일부 점상 출혈"],
       metrics: {
-        sensitivity: "진하고 강한 붉은빛이 넓게 퍼져 있고 염증 범위를 직접 확인해야 합니다.",
-        scale: "두껍고 거친 판 모양 각질이 모공 입구를 덮고 있습니다.",
-        oil: "각질과 유분성 부착물이 엉겨 모발이 붙어 보일 수 있는 중증 상태입니다."
+        sensitivity: "진한 홍반이 넓게 보이고 점상 출혈 여부를 의료진이 확인해야 합니다.",
+        scale: "두꺼운 각질판이 붉은 바탕 위에 쌓여 시야 대부분을 덮습니다.",
+        oil: "노란 딱지와 두꺼운 각질이 엉겨 모공 주변에 붙어 있습니다."
       }
     },
     "4+": {
       name: "Severe+",
-      label: "최악 상태 예시",
-      image: "assets/stage-4.jpg",
-      summary: "4단계보다 악화된 최악 상태를 설명하기 위한 예시 단계입니다. 별도 의료 기준 확정이 필요합니다.",
-      symptoms: ["최악 상태 비교용", "환자 현재 결과로 사용하지 않음", "의료진 기준·이미지 확정 필요"],
+      label: "최중증",
+      image: "assets/stage-4-plus.jpg",
+      summary: "시야 전체가 두꺼운 각질판으로 덮이고 진한 홍반·딱지·진물 소견이 함께 보이는 최중증 단계입니다.",
+      symptoms: ["시야 전체를 덮는 두꺼운 각질판", "진한 홍반", "노란 진물 딱지·출혈점 가능"],
       metrics: {
-        sensitivity: "4+단계의 독립 기준은 제공 자료에 없어 의료진 확정이 필요합니다.",
-        scale: "4+단계의 독립 각질 기준과 대표 사진은 별도 확정이 필요합니다.",
-        oil: "4+단계의 독립 유분 기준은 별도 확정이 필요합니다."
+        sensitivity: "바탕 전체가 진한 붉은색으로 보이며 출혈점 여부를 우선 확인해야 합니다.",
+        scale: "두꺼운 각질판이 빈틈 없이 시야를 채우는 가장 심한 범위입니다.",
+        oil: "노란 진물 딱지와 유분성 부착물이 두꺼운 각질판과 함께 관찰될 수 있습니다."
       }
     }
   };
 
   const treatmentGuidelines = {
+    "0": { required: "정상 유지 관리", count: "정기 점검", enhanced: "홈케어 유지" },
+    "1": { required: "두피 상태 상담", count: "의료진 확인 후 결정", enhanced: "세정·홈케어 검토" },
+    "1+": { required: "두피 상태 상담", count: "의료진 확인 후 결정", enhanced: "세정·진정 관리 검토" },
     "2": { required: "프리컨디셔닝 + 아르케", count: "10–15회", enhanced: "보톡스" },
     "2+": { required: "프리컨디셔닝 + 아르케", count: "15–20회", enhanced: "보톡스 + 리쥬란" },
     "3": { required: "프리컨디셔닝 + 아르케", count: "20–25회", enhanced: "보톡스 + 줄기세포 배양액" },
     "3+": { required: "프리컨디셔닝 + 아르케", count: "25–30회", enhanced: "보톡스 + 엑소좀" },
-    "4": { required: "프리컨디셔닝 + 아르케", count: "30–40회", enhanced: "보톡스 + 엑소좀" }
+    "4": { required: "프리컨디셔닝 + 아르케", count: "30–40회", enhanced: "보톡스 + 엑소좀" },
+    "4+": { required: "의료진 우선 평가", count: "개별 치료계획 수립", enhanced: "중증 관리 프로토콜 검토" }
   };
 
   const metricDefinitions = [
@@ -139,6 +143,8 @@
     suggestedStage: "3+",
     finalStage: "3+",
     metrics: { sensitivity: 18, scale: 12, oil: 24 },
+    confidence: 0,
+    analysisWarnings: [],
     confirmed: false,
     handedOff: false
   };
@@ -176,7 +182,7 @@
   }
 
   function formatBytes(bytes) {
-    return bytes ? `${(bytes / 1024 / 1024).toFixed(1)}MB` : "합성 샘플";
+    return bytes ? `${(bytes / 1024 / 1024).toFixed(1)}MB` : "센터 참고사진";
   }
 
   function validateFiles(fileList) {
@@ -214,9 +220,9 @@
 
   function loadSamplePhotos() {
     const samples = [
-      { name: "합성-민감성-샘플.jpg", url: "assets/stage-2.jpg" },
-      { name: "합성-각질-샘플.jpg", url: "assets/stage-3.jpg" },
-      { name: "합성-유분-샘플.jpg", url: "assets/stage-4.jpg" }
+      { name: "원장선정-2단계-참고.jpg", url: "assets/stage-2.jpg" },
+      { name: "원장선정-3단계-참고.jpg", url: "assets/stage-3.jpg" },
+      { name: "원장선정-4단계-참고.jpg", url: "assets/stage-4.jpg" }
     ];
     const remaining = MAX_PHOTOS - state.photos.length;
     if (remaining === 0) {
@@ -271,7 +277,7 @@
       }
       const meta = document.createElement("p");
       meta.className = "photo-meta";
-      meta.textContent = `${photo.synthetic ? "SYNTHETIC" : photo.type.replace("image/", "").toUpperCase()} · ${formatBytes(photo.size)}`;
+      meta.textContent = `${photo.synthetic ? "DIRECTOR REFERENCE" : photo.type.replace("image/", "").toUpperCase()} · ${formatBytes(photo.size)}`;
       const actions = document.createElement("div");
       actions.className = "photo-card-actions";
       if (state.primaryPhotoId !== photo.id) actions.appendChild(createActionButton("대표 지정", () => { state.primaryPhotoId = photo.id; renderUploadPhotos(); }));
@@ -311,6 +317,8 @@
     state.photos = [];
     state.primaryPhotoId = null;
     state.galleryPhotoId = null;
+    state.confidence = 0;
+    state.analysisWarnings = [];
     state.confirmed = false;
     state.handedOff = false;
     renderUploadPhotos();
@@ -323,36 +331,22 @@
   function normalizePatientStage(stage) {
     const value = String(stage);
     if (PATIENT_STAGES.includes(value)) return value;
-    const numeric = Number.parseFloat(value);
-    if (!Number.isFinite(numeric) || numeric <= 2) return "2";
-    if (numeric >= 4) return "4";
-    return "3";
+    return "2";
   }
 
   function getNextStage(stage) {
-    const transitions = { "2": "2+", "2+": "3", "3": "3+", "3+": "4", "4": "4+" };
-    return transitions[normalizePatientStage(stage)] || "4+";
-  }
-
-  function seedFromPhotos() {
-    return state.photos.reduce((total, photo, photoIndex) => {
-      const nameSeed = Array.from(photo.name).reduce((sum, char) => sum + char.charCodeAt(0), 0);
-      return total + nameSeed + photo.size + ((photoIndex + 1) * 97);
-    }, 211);
-  }
-
-  function generateDemoAssessment() {
-    const stageByCount = ["2", "2+", "3", "3+", "4", "4"];
-    const suggestedStage = stageByCount[Math.max(0, Math.min(state.photos.length - 1, stageByCount.length - 1))];
-    const seed = seedFromPhotos();
-    return {
-      stage: suggestedStage,
-      metrics: {
-        sensitivity: 1 + ((seed * 7 + 3) % 30),
-        scale: 1 + ((seed * 11 + 9) % 30),
-        oil: 1 + ((seed * 13 + 17) % 30)
-      }
+    const transitions = {
+      "0": "1",
+      "1": "1+",
+      "1+": "2",
+      "2": "2+",
+      "2+": "3",
+      "3": "3+",
+      "3+": "4",
+      "4": "4+",
+      "4+": "4+"
     };
+    return transitions[normalizePatientStage(stage)] || "4+";
   }
 
   function renderPatientGallery() {
@@ -404,9 +398,9 @@
       image.src = data.image;
       image.alt = `${stageKey}단계 ${data.label} 참고 이미지`;
       imageWrap.appendChild(image);
-      if (stageKey.includes("+")) {
+      if (stageKey !== "0") {
         const assetBadge = document.createElement("span");
-        assetBadge.textContent = stageKey === "4+" ? "자산 확인 필요" : "+단계 공용 이미지";
+        assetBadge.textContent = "원장 선정 대표사진";
         imageWrap.appendChild(assetBadge);
       }
       const text = document.createElement("div");
@@ -464,24 +458,24 @@
       const scoreText = document.createElement("strong");
       scoreText.textContent = String(score);
       const outOf = document.createElement("span");
-      outOf.textContent = "/ 100";
+      outOf.textContent = "/ 30";
       scoreRow.append(scoreText, outOf);
       const gauge = document.createElement("div");
       gauge.className = "metric-gauge";
       gauge.setAttribute("role", "img");
-      gauge.setAttribute("aria-label", `${metric.label} 점수 ${score}점, 0에 가까울수록 심각`);
+      gauge.setAttribute("aria-label", `${metric.label} 점수 ${score}점, 1에 가까울수록 심각`);
       const track = document.createElement("div");
       track.className = "metric-gauge-track";
       const marker = document.createElement("span");
       marker.className = "metric-gauge-marker";
-      marker.style.left = `${score}%`;
+      marker.style.left = `${((score - 1) / 29) * 100}%`;
       track.appendChild(marker);
       const labels = document.createElement("div");
       labels.className = "metric-gauge-labels";
       const serious = document.createElement("span");
-      serious.textContent = "심각 0";
+      serious.textContent = "심각 1";
       const normal = document.createElement("span");
-      normal.textContent = "정상 100";
+      normal.textContent = "정상 30";
       labels.append(serious, normal);
       gauge.append(track, labels);
       const description = document.createElement("p");
@@ -509,16 +503,24 @@
     return card;
   }
 
-  function buildProgressionArrow() {
+  function buildProgressionArrow(durationText) {
     const arrow = document.createElement("div");
     arrow.className = "progression-arrow";
     arrow.setAttribute("aria-hidden", "true");
     const icon = document.createElement("span");
     icon.textContent = "→";
     const duration = document.createElement("small");
-    duration.textContent = "2–4개월";
+    duration.textContent = durationText;
     arrow.append(icon, duration);
     return arrow;
+  }
+
+  function getCumulativeProgressionDuration(fromStage, toStage = "4+") {
+    const fromIndex = ALL_STAGES.indexOf(fromStage);
+    const toIndex = ALL_STAGES.indexOf(toStage);
+    if (fromIndex < 0 || toIndex < fromIndex) return "2–4개월";
+    const stageCount = Math.max(1, toIndex - fromIndex + 1);
+    return `${stageCount * 2}–${stageCount * 4}개월`;
   }
 
   function renderProgression() {
@@ -529,9 +531,9 @@
     grid.replaceChildren();
     grid.append(
       buildProgressionCard("current", current, primary?.url || stageData[current].image, "현재 상태", stageData[current].label),
-      buildProgressionArrow(),
+      buildProgressionArrow("2–4개월"),
       buildProgressionCard("next", next, stageData[next].image, "다음 단계 예시", stageData[next].summary),
-      buildProgressionArrow(),
+      buildProgressionArrow(getCumulativeProgressionDuration(next)),
       buildProgressionCard("worst", "4+", stageData["4+"].image, "최악 상태 예시", stageData["4+"].summary)
     );
   }
@@ -586,8 +588,13 @@
     $("stageSummary").textContent = data.summary;
     renderList("symptomList", data.symptoms);
     const status = $("reviewStatus");
-    status.textContent = state.confirmed ? "의료진 확정" : "데모 제안 · 미확정";
+    status.textContent = state.confirmed ? "의료진 확정" : "39장 유사도 제안 · 미확정";
     status.className = `status-badge ${state.confirmed ? "is-confirmed" : "is-pending"}`;
+    $("modelVersion").textContent = window.ScalpClassifier.modelVersion;
+    $("analysisEvidence").textContent = `원장 선정 39장 전체 특징값과 등록 사진 ${state.photos.length}장을 비교했습니다. 단계 유사도 신뢰도 ${state.confidence}% · 최종 확정은 의료진이 진행합니다.`;
+    $("analysisWarnings").textContent = state.analysisWarnings.length
+      ? `촬영 확인: ${state.analysisWarnings.join(" · ")}`
+      : "촬영 품질 경고 없음 · 흐림·강한 반사·비질환 소견은 의료진이 별도 제외합니다.";
     renderStageReference();
     renderMetricCards();
     renderProgression();
@@ -596,11 +603,12 @@
     updateHandoffButtons();
   }
 
-  function prepareResult() {
-    const assessment = generateDemoAssessment();
+  function prepareResult(assessment) {
     state.suggestedStage = normalizePatientStage(assessment.stage);
     state.finalStage = state.suggestedStage;
     state.metrics = assessment.metrics;
+    state.confidence = assessment.confidence;
+    state.analysisWarnings = assessment.warnings;
     state.confirmed = false;
     state.handedOff = false;
     stageSelect.value = state.finalStage;
@@ -626,14 +634,28 @@
 
   function startAnalysis() {
     if (state.photos.length === 0) return;
+    if (!window.ScalpClassifier || window.ScalpClassifier.directorReferenceCount !== 39) {
+      showValidation("39장 기준 모델을 불러오지 못했습니다. 페이지를 새로고침해주세요.");
+      showView("upload");
+      return;
+    }
     clearAnalysisTimers();
+    analyzeButton.disabled = true;
     setAnalysisStep(0);
     showView("analysis");
     analysisTimers.push(window.setTimeout(() => setAnalysisStep(1), 260));
     analysisTimers.push(window.setTimeout(() => setAnalysisStep(2), 620));
-    analysisTimers.push(window.setTimeout(() => {
-      prepareResult();
-      showView("result");
+    analysisTimers.push(window.setTimeout(async () => {
+      try {
+        const assessment = await window.ScalpClassifier.analyzePhotos(state.photos);
+        prepareResult(assessment);
+        showView("result");
+      } catch (error) {
+        showView("upload");
+        showValidation(error instanceof Error ? error.message : "사진 분석 중 오류가 발생했습니다.");
+      } finally {
+        analyzeButton.disabled = state.photos.length === 0;
+      }
     }, 980));
   }
 

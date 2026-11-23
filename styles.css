@@ -620,6 +620,23 @@ img { display: block; max-width: 100%; }
   letter-spacing: .06em;
 }
 
+.analysis-evidence,
+.analysis-warnings {
+  margin: 9px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #f4f7f5;
+  color: #4e5e59;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.analysis-warnings {
+  margin-top: 6px;
+  background: var(--amber-soft);
+  color: #74501e;
+}
+
 .review-panel form {
   align-items: start;
 }

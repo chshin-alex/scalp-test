@@ -52,7 +52,7 @@
           <div>
             <span class="prototype-badge">VER.2.1 LOCAL PROTOTYPE</span>
             <h2 id="homeHeading">사진에서 상담까지,<br>한 화면에서 연결합니다.</h2>
-            <p>최대 6장의 두피 사진을 등록하고 5개 환자 단계, 세부 상태, 의료진 확정, 상담 인계까지 확인합니다.</p>
+            <p>최대 6장의 두피 사진을 등록하고 0~4+ 전체 단계, 세부 상태, 의료진 확정, 상담 인계까지 확인합니다.</p>
             <button class="primary-button large" id="heroStartButton" type="button">
               두피 진단 시작 <span aria-hidden="true">→</span>
             </button>
@@ -68,7 +68,7 @@
 
         <div class="overview-grid">
           <article><span class="overview-icon" aria-hidden="true">▧</span><b>사진 최대 6장</b><p>등록 사진은 브라우저 메모리에서만 사용합니다.</p></article>
-          <article><span class="overview-icon" aria-hidden="true">5</span><b>환자 결과 5단계</b><p>2·2+·3·3+·4 중 하나로 제안합니다.</p></article>
+          <article><span class="overview-icon" aria-hidden="true">9</span><b>환자 결과 9단계</b><p>0·1·1+·2·2+·3·3+·4·4+ 중 하나로 제안합니다.</p></article>
           <article><span class="overview-icon" aria-hidden="true">3</span><b>세부 상태 3종</b><p>민감성·각질·유분을 사진과 함께 설명합니다.</p></article>
         </div>
       </section>
@@ -86,8 +86,8 @@
 
         <div class="privacy-banner" role="note">
           <span aria-hidden="true">🔒</span>
-          <div><b>로컬 프로토타입</b><p>사진은 서버나 브라우저 저장소에 보관하지 않습니다. 실제 환자 사진 대신 합성·가명 이미지를 사용하세요.</p></div>
-          <button class="secondary-button sample-button" id="loadSampleButton" type="button">합성 샘플 3장 불러오기</button>
+          <div><b>기기 내 분석</b><p>등록 사진은 이 탭의 메모리에서만 분석되며 서버·브라우저 저장소로 전송·저장하지 않습니다. 공용 기기에서는 사용 후 탭을 닫으세요.</p></div>
+          <button class="secondary-button sample-button" id="loadSampleButton" type="button">원장 선정 참고사진 3장 불러오기</button>
         </div>
 
         <div class="upload-zone" id="uploadZone">
@@ -106,19 +106,19 @@
           <button class="secondary-button" id="cancelUploadButton" type="button">취소</button>
           <div>
             <span class="helper-text" id="uploadHelper">사진을 1장 이상 등록하면 분석을 시작할 수 있습니다.</span>
-            <button class="primary-button" id="analyzeButton" type="button" disabled data-testid="analyze">데모 분석 시작</button>
+            <button class="primary-button" id="analyzeButton" type="button" disabled data-testid="analyze">39장 기준 분석 시작</button>
           </div>
         </div>
       </section>
 
       <section class="view analysis-view" id="analysisView" aria-labelledby="analysisHeading" aria-live="polite">
         <div class="analysis-loader" aria-hidden="true"><span></span><span></span><span></span></div>
-        <p class="eyebrow">STEP 2 · 데모 분석</p>
+        <p class="eyebrow">STEP 2 · 참고사진 유사도 분석</p>
         <h2 id="analysisHeading">진단 결과 화면을 준비하고 있습니다</h2>
-        <p>실제 의료 AI가 아닌 로컬 데모 규칙으로 단계와 세부 상태를 생성합니다.</p>
+        <p>원장 선정 39장의 붉은기·각질·색 분포·질감 특징과 등록 사진을 기기 안에서 비교합니다.</p>
         <div class="analysis-steps" aria-label="처리 진행 상태">
           <span data-analysis-step="0" class="is-active">사진 불러오기</span>
-          <span data-analysis-step="1">단계·세부 상태 생성</span>
+          <span data-analysis-step="1">39장 특징값 비교</span>
           <span data-analysis-step="2">결과 화면 구성</span>
         </div>
       </section>
@@ -136,7 +136,7 @@
           </div>
         </div>
 
-        <div class="demo-warning" role="note"><b>데모 판정입니다.</b> 이미지 내용을 실제로 판독하지 않습니다. 단계·수치·치료안은 의료진 검토 후 상담에 사용하세요.</div>
+        <div class="demo-warning" role="note"><b>참고사진 유사도 기반 단계 제안입니다.</b> 39장만으로 의료진 수준의 진단 정확도를 보장하지 않습니다. 단계·수치·치료안은 의료진 확정 후 상담에 사용하세요.</div>
 
         <nav class="section-nav" aria-label="진단 결과 섹션">
           <a href="#current-result">현재 결과</a>
@@ -157,11 +157,13 @@
             </div>
 
             <div class="diagnosis-summary-card">
-              <div class="status-row"><span class="status-badge is-pending" id="reviewStatus">데모 제안 · 미확정</span><span id="analysisDate">-</span></div>
+              <div class="status-row"><span class="status-badge is-pending" id="reviewStatus">39장 유사도 제안 · 미확정</span><span id="analysisDate">-</span></div>
               <div class="stage-hero"><small>현재 제안 단계</small><strong id="displayStage">3+단계</strong><span id="displayStageName">Moderate+</span></div>
               <p class="stage-summary" id="stageSummary"></p>
               <ul class="symptom-list" id="symptomList"></ul>
-              <div class="model-note"><span>분석 버전</span><b>LOCAL-DEMO 2.1</b></div>
+              <div class="model-note"><span>분석 버전</span><b id="modelVersion">DIRECTOR-REFERENCE-KNN-39-v1</b></div>
+              <p class="analysis-evidence" id="analysisEvidence"></p>
+              <p class="analysis-warnings" id="analysisWarnings"></p>
             </div>
           </div>
 
@@ -170,11 +172,15 @@
             <form id="reviewForm" novalidate>
               <label>최종 단계
                 <select id="stageSelect">
+                  <option value="0">0단계 · Clear</option>
+                  <option value="1">1단계 · Almost clear</option>
+                  <option value="1+">1+단계 · Almost clear+</option>
                   <option value="2">2단계 · Mild</option>
                   <option value="2+">2+단계 · Mild+</option>
                   <option value="3">3단계 · Moderate</option>
                   <option value="3+" selected>3+단계 · Moderate+</option>
                   <option value="4">4단계 · Severe</option>
+                  <option value="4+">4+단계 · Severe+</option>
                 </select>
               </label>
               <label class="change-reason">수정 사유<textarea id="changeReason" rows="3" maxlength="200" placeholder="제안 단계와 다를 때 입력해주세요."></textarea></label>
@@ -185,7 +191,7 @@
           </div>
 
           <div class="stage-reference">
-            <div class="card-heading"><div><p class="eyebrow">SCALP STAGE REFERENCE</p><h3>0~4+ 전체 단계 기준</h3></div><span>환자 결과는 2~4단계만 허용</span></div>
+            <div class="card-heading"><div><p class="eyebrow">SCALP STAGE REFERENCE</p><h3>0~4+ 전체 단계 기준</h3></div><span>원장 선정 39장 기준</span></div>
             <div class="stage-reference-grid" id="stageReferenceGrid"></div>
           </div>
         </section>
@@ -194,14 +200,14 @@
           <div class="section-kicker">B · 세부 상태</div>
           <div class="section-title-row"><div><h3>민감성·각질·유분 상태</h3><p>낮은 수치일수록 심각한 상태를 의미합니다.</p></div><span class="demo-only-badge">DEMO SCORE 1–30</span></div>
           <div class="metric-grid" id="metricGrid"></div>
-          <div class="metric-footnote">세부 점수는 로컬 목업용 데모 값입니다. 환자 종합 점수는 표시하지 않습니다.</div>
+          <div class="metric-footnote">세부 점수는 39장 참고사진과의 로컬 유사도에서 계산한 보조값입니다. 환자 종합 점수는 표시하지 않습니다.</div>
         </section>
 
         <section class="result-section" id="progression">
           <div class="section-kicker">C · 악화 흐름</div>
-          <div class="section-title-row"><div><h3>치료하지 않을 경우의 단계 변화</h3><p>현재 상태와 다음 단계, 4+단계 예시를 비교합니다.</p></div><span class="rule-version">단계별 2–4개월 안내</span></div>
+          <div class="section-title-row"><div><h3>치료하지 않을 경우의 단계 변화</h3><p>현재 상태와 다음 단계, 4+단계까지의 누적 기간을 비교합니다.</p></div><span class="rule-version">다음 단계마다 2–4개월</span></div>
           <div class="progression-grid" id="progressionGrid"></div>
-          <div class="progression-note"><b>안내</b><span>2–4개월은 기획상 상담 안내값이며 개인별 진행을 보장하지 않습니다. 환자 노출 전 의료진 검수가 필요합니다.</span></div>
+          <div class="progression-note"><b>안내</b><span>각 다음 단계로의 악화는 2–4개월로 안내하며, 4+단계까지의 기간은 남은 단계 수에 따라 누적해 표시합니다. 이 값은 개인별 진행을 보장하지 않으며 환자 노출 전 의료진 검수가 필요합니다.</span></div>
         </section>
 
         <section class="result-section" id="healthy-comparison">
@@ -215,7 +221,7 @@
               <p>과도한 붉음과 두꺼운 각질이 없고 모발이 비교적 굵고 고르게 관찰되는 예시입니다.</p>
             </article>
             <article class="hair-comparison-card severe">
-              <div class="comparison-image"><img src="assets/stage-4.jpg" alt="4+단계 두피 예시 이미지"></div>
+              <div class="comparison-image"><img src="assets/stage-4-plus.jpg" alt="4+단계 두피 예시 이미지"></div>
               <span class="comparison-label">SEVERE+ · 4+단계 예시</span><h4>악화된 두피 환경</h4>
               <div class="hair-stats"><div><small>모발 굵기</small><b>0.1mm</b></div><div><small>모근당 모발</small><b>1개</b></div></div>
               <p>붉음·두꺼운 각질·유분성 부착물이 모공 주변에 쌓이고 모발이 가늘고 성기게 관찰되는 예시입니다.</p>
@@ -266,6 +272,8 @@
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <script src="reference-model.js" defer></script>
+  <script src="scalp-classifier.js" defer></script>
   <script src="app.js" defer></script>
 </body>
 </html>
