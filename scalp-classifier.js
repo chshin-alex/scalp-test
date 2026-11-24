@@ -3,6 +3,8 @@
 
   const MODEL = window.SCALP_REFERENCE_MODEL;
   const STAGES = ["0", "1", "1+", "2", "2+", "3", "3+", "4", "4+"];
+  const MIN_PATIENT_STAGE = STAGES.indexOf("2");
+  const MAX_PATIENT_STAGE = STAGES.indexOf("4");
   const FEATURE_SIZE = MODEL?.featureSize || 64;
   const TOP_NEIGHBORS = 5;
 
@@ -203,7 +205,7 @@
       (sum, result) => sum + result.classification.stageScore,
       0
     ) / photoResults.length;
-    const stageIndex = clamp(Math.round(stageScore), 0, STAGES.length - 1);
+    const stageIndex = clamp(Math.round(stageScore), MIN_PATIENT_STAGE, MAX_PATIENT_STAGE);
     const spread = Math.sqrt(
       photoResults.reduce(
         (sum, result) => sum + ((result.classification.stageScore - stageScore) ** 2),

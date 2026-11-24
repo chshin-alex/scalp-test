@@ -5,7 +5,7 @@
   const MAX_BYTES = 10 * 1024 * 1024;
   const ACCEPTED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
   const ALL_STAGES = ["0", "1", "1+", "2", "2+", "3", "3+", "4", "4+"];
-  const PATIENT_STAGES = [...ALL_STAGES];
+  const PATIENT_STAGES = ALL_STAGES.slice(ALL_STAGES.indexOf("2"), ALL_STAGES.indexOf("4") + 1);
 
   const stageData = {
     "0": {
@@ -328,12 +328,6 @@
     return state.photos.find((photo) => photo.id === state.primaryPhotoId) || state.photos[0] || null;
   }
 
-  function normalizePatientStage(stage) {
-    const value = String(stage);
-    if (PATIENT_STAGES.includes(value)) return value;
-    return "2";
-  }
-
   function getNextStage(stage) {
     const transitions = {
       "0": "1",
@@ -346,7 +340,7 @@
       "4": "4+",
       "4+": "4+"
     };
-    return transitions[normalizePatientStage(stage)] || "4+";
+    return transitions[stage] || "4+";
   }
 
   function renderPatientGallery() {
@@ -604,7 +598,10 @@
   }
 
   function prepareResult(assessment) {
-    state.suggestedStage = normalizePatientStage(assessment.stage);
+    if (!PATIENT_STAGES.includes(assessment.stage)) {
+      throw new Error("허용된 환자 결과 단계를 확인할 수 없습니다.");
+    }
+    state.suggestedStage = assessment.stage;
     state.finalStage = state.suggestedStage;
     state.metrics = assessment.metrics;
     state.confidence = assessment.confidence;
@@ -661,7 +658,7 @@
 
   function confirmReview(event) {
     event.preventDefault();
-    const selectedStage = normalizePatientStage(stageSelect.value);
+    const selectedStage = stageSelect.value;
     const reason = $("changeReason").value.trim();
     if (!PATIENT_STAGES.includes(selectedStage)) {
       $("reviewError").textContent = "허용된 환자 결과 단계를 선택해주세요.";
@@ -683,7 +680,8 @@
   }
 
   function previewStageChange() {
-    state.finalStage = normalizePatientStage(stageSelect.value);
+    if (!PATIENT_STAGES.includes(stageSelect.value)) return;
+    state.finalStage = stageSelect.value;
     state.confirmed = false;
     state.handedOff = false;
     $("reviewError").hidden = true;

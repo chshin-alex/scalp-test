@@ -52,7 +52,7 @@
           <div>
             <span class="prototype-badge">VER.2.1 LOCAL PROTOTYPE</span>
             <h2 id="homeHeading">사진에서 상담까지,<br>한 화면에서 연결합니다.</h2>
-            <p>최대 6장의 두피 사진을 등록하고 0~4+ 전체 단계, 세부 상태, 의료진 확정, 상담 인계까지 확인합니다.</p>
+            <p>최대 6장의 두피 사진을 등록하고 환자 결과와 0~4+ 비교 기준, 세부 상태, 의료진 확정, 상담 인계를 확인합니다.</p>
             <button class="primary-button large" id="heroStartButton" type="button">
               두피 진단 시작 <span aria-hidden="true">→</span>
             </button>
@@ -68,7 +68,7 @@
 
         <div class="overview-grid">
           <article><span class="overview-icon" aria-hidden="true">▧</span><b>사진 최대 6장</b><p>등록 사진은 브라우저 메모리에서만 사용합니다.</p></article>
-          <article><span class="overview-icon" aria-hidden="true">9</span><b>환자 결과 9단계</b><p>0·1·1+·2·2+·3·3+·4·4+ 중 하나로 제안합니다.</p></article>
+          <article><span class="overview-icon" aria-hidden="true">5</span><b>환자 결과 5단계</b><p>2·2+·3·3+·4 중 하나로 제안합니다.</p></article>
           <article><span class="overview-icon" aria-hidden="true">3</span><b>세부 상태 3종</b><p>민감성·각질·유분을 사진과 함께 설명합니다.</p></article>
         </div>
       </section>
@@ -172,15 +172,11 @@
             <form id="reviewForm" novalidate>
               <label>최종 단계
                 <select id="stageSelect">
-                  <option value="0">0단계 · Clear</option>
-                  <option value="1">1단계 · Almost clear</option>
-                  <option value="1+">1+단계 · Almost clear+</option>
                   <option value="2">2단계 · Mild</option>
                   <option value="2+">2+단계 · Mild+</option>
                   <option value="3">3단계 · Moderate</option>
                   <option value="3+" selected>3+단계 · Moderate+</option>
                   <option value="4">4단계 · Severe</option>
-                  <option value="4+">4+단계 · Severe+</option>
                 </select>
               </label>
               <label class="change-reason">수정 사유<textarea id="changeReason" rows="3" maxlength="200" placeholder="제안 단계와 다를 때 입력해주세요."></textarea></label>

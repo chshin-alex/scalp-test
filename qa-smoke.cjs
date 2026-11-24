@@ -2,11 +2,11 @@ const { chromium } = require("playwright");
 const path = require("path");
 
 const BASE_URL = process.env.QA_BASE_URL || "http://127.0.0.1:4173";
-const ALLOWED_STAGES = new Set(["0단계", "1단계", "1+단계", "2단계", "2+단계", "3단계", "3+단계", "4단계", "4+단계"]);
+const ALLOWED_STAGES = new Set(["2단계", "2+단계", "3단계", "3+단계", "4단계"]);
 
-async function completeDemo(page) {
+async function completeDemo(page, filename = "stage-2-plus.jpg") {
   await page.getByTestId("start-diagnosis").click();
-  await page.locator("#photoInput").setInputFiles(path.join(__dirname, "assets", "stage-2-plus.jpg"));
+  await page.locator("#photoInput").setInputFiles(path.join(__dirname, "assets", filename));
   const count = await page.locator("#uploadCount").textContent();
   if (count !== "1") throw new Error(`Expected 1 uploaded photo, got ${count}`);
   await page.getByTestId("analyze").click();
@@ -48,15 +48,15 @@ async function completeDemo(page) {
   if (modelInfo.count !== 40) throw new Error(`Expected 40 total reference vectors, got ${modelInfo.count}`);
 
   const representativeStages = [
-    ["0", "stage-0.jpg"],
-    ["1", "stage-1.jpg"],
-    ["1+", "stage-1-plus.jpg"],
+    ["2", "stage-0.jpg"],
+    ["2", "stage-1.jpg"],
+    ["2", "stage-1-plus.jpg"],
     ["2", "stage-2.jpg"],
     ["2+", "stage-2-plus.jpg"],
     ["3", "stage-3.jpg"],
     ["3+", "stage-3-plus.jpg"],
     ["4", "stage-4.jpg"],
-    ["4+", "stage-4-plus.jpg"]
+    ["4", "stage-4-plus.jpg"]
   ];
   const representativeResults = await page.evaluate(async (pairs) => {
     const results = [];
@@ -75,7 +75,7 @@ async function completeDemo(page) {
   }
 
   const options = await page.locator("#stageSelect option").evaluateAll((nodes) => nodes.map((node) => node.value));
-  if (JSON.stringify(options) !== JSON.stringify(["0", "1", "1+", "2", "2+", "3", "3+", "4", "4+"])) {
+  if (JSON.stringify(options) !== JSON.stringify(["2", "2+", "3", "3+", "4"])) {
     throw new Error(`Unexpected stage options: ${options.join(",")}`);
   }
 
@@ -118,6 +118,20 @@ async function completeDemo(page) {
   const handoff = (await page.locator("#handoffButton").textContent()).trim();
   if (handoff !== "상담 인계 완료") throw new Error(`Expected handoff completion, got ${handoff}`);
   await page.screenshot({ path: "qa-result.png", fullPage: true });
+
+  for (const [filename, expected] of [["stage-1-plus.jpg", "2"], ["stage-4-plus.jpg", "4"]]) {
+    await page.goto(BASE_URL);
+    await completeDemo(page, filename);
+    const shown = (await page.locator("#displayStage").textContent()).trim();
+    const selected = await page.locator("#stageSelect").inputValue();
+    if (shown !== `${expected}단계` || selected !== expected) {
+      throw new Error(`Patient stage constraint failed for ${filename}: ${shown} / ${selected}`);
+    }
+    await page.getByTestId("confirm-review").click();
+    if ((await page.locator("#reviewStatus").textContent()).trim() !== "의료진 확정") {
+      throw new Error(`Cannot confirm bounded stage for ${filename}`);
+    }
+  }
 
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const mobileErrors = [];
